@@ -1,0 +1,61 @@
+name: test
+on:
+  - pull_request
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18.x, 20.x, 21.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          version: 8
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Cache Next.js build
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Check all
+        run: pnpm check-all
+
+      - name: Build
+        run: pnpm build
+
+      - name: E2E Test
+        uses: cypress-io/github-action@v5
+        with:
+          build: pnpm build
+          start: pnpm dev
+
+      - name: Upload coverage to Codecov
+        if: matrix.node-version == '20.x'
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/cobertura-coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+          verbose: true
