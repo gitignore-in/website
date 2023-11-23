@@ -1,0 +1,36 @@
+{
+  "name": "@gitignore-in/website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "check-all": "concurrently \"pnpm:format:check\" \"pnpm:lint\"",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "concurrently \"pnpm:test:e2e\"",
+    "test:e2e": "cypress run",
+    "format": "concurrently \"pnpm:format:write\"",
+    "format:check": "prettier --check --ignore-path .gitignore --ignore-path .prettierignore .",
+    "format:write": "prettier --write --ignore-path .gitignore --ignore-path .prettierignore ."
+  },
+  "dependencies": {
+    "@types/node": "20.9.4",
+    "@types/react": "18.2.38",
+    "@types/react-dom": "18.2.17",
+    "autoprefixer": "10.4.16",
+    "eslint": "8.54.0",
+    "eslint-config-next": "14.0.3",
+    "next": "14.0.3",
+    "postcss": "8.4.31",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "5.3.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cypress": "^13.6.0",
+    "prettier": "^3.1.0",
+    "typedoc": "^0.25.3"
+  }
+}
