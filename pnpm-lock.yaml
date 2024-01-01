@@ -50,8 +50,8 @@ devDependencies:
     specifier: ^3.1.1
     version: 3.1.1
   typedoc:
-    specifier: ^0.25.4
-    version: 0.25.4(typescript@5.3.3)
+    specifier: ^0.25.6
+    version: 0.25.6(typescript@5.3.3)
 
 packages:
 
@@ -3092,8 +3092,8 @@ packages:
       is-typed-array: 1.1.12
     dev: false
 
-  /typedoc@0.25.4(typescript@5.3.3):
-    resolution: {integrity: sha512-Du9ImmpBCw54bX275yJrxPVnjdIyJO/84co0/L9mwe0R3G4FSR6rQ09AlXVRvZEGMUg09+z/usc8mgygQ1aidA==}
+  /typedoc@0.25.6(typescript@5.3.3):
+    resolution: {integrity: sha512-1rdionQMpOkpA58qfym1J+YD+ukyA1IEIa4VZahQI2ZORez7dhOvEyUotQL/8rSoMBopdzOS+vAIsORpQO4cTA==}
     engines: {node: '>= 16'}
     hasBin: true
     peerDependencies:
