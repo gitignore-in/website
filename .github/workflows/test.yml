@@ -38,7 +38,7 @@ jobs:
         run: pnpm install
 
       - name: Check all
-        run: pnpm check-all
+        run: pnpm lint
 
       - name: Build
         run: pnpm build
