@@ -41,8 +41,8 @@ devDependencies:
     specifier: ^13.6.4
     version: 13.6.4
   typedoc:
-    specifier: ^0.25.7
-    version: 0.25.7(typescript@5.3.3)
+    specifier: ^0.25.8
+    version: 0.25.8(typescript@5.3.3)
 
 packages:
 
@@ -1597,8 +1597,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /typedoc@0.25.7(typescript@5.3.3):
-    resolution: {integrity: sha512-m6A6JjQRg39p2ZVRIN3NKXgrN8vzlHhOS+r9ymUYtcUP/TIQPvWSq7YgE5ZjASfv5Vd5BW5xrir6Gm2XNNcOow==}
+  /typedoc@0.25.8(typescript@5.3.3):
+    resolution: {integrity: sha512-mh8oLW66nwmeB9uTa0Bdcjfis+48bAjSH3uqdzSuSawfduROQLlXw//WSNZLYDdhmMVB7YcYZicq6e8T0d271A==}
     engines: {node: '>= 16'}
     hasBin: true
     peerDependencies:
