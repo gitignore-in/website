@@ -9,14 +9,22 @@ export default function Home() {
       <h2>Concept</h2>
       <p>
         gitignore.in is a tool to generate .gitignore files for your projects.
-        It is inspired by gitignore.io gibo commands. <br />
-        .gitignore.in file stores the target of gibo and gitignore.io, so you
-        can regenerate .gitignore file by gitignore.in command.
+        <br />
+        <code>.gitignore.in</code> file stores the target of{' '}
+        <Link href="https://github.com/simonwhitaker/gibo">gibo</Link> and{' '}
+        <Link href="https://www.toptal.com/developers/gitignore/">
+          gitignore.io
+        </Link>
+        . You can generate a .gitignore file by running the gitignore.in
+        command.
         <Image
           alt="generate .gitignore from .gitignore.in"
           width="735"
           height="336"
           src="/concept.png"
+          style={{
+            display: 'block',
+          }}
         />
       </p>
       <h2>Installation</h2>
@@ -33,16 +41,23 @@ export default function Home() {
       <p>
         Homebrew (macOS) You can install gitignore-in using the Homebrew package
         manager.
-        <code>
-          $ brew tap gitignore-in/gitignore-in <br />$ brew install gitignore-in
-        </code>
+        <pre>
+          <code>
+            $ brew tap gitignore-in/gitignore-in <br />$ brew install
+            gitignore-in
+          </code>
+        </pre>
       </p>
       <h2>Usage</h2>
       <p>
         Usage
-        <code>$ gitignore.in</code>
-        This will generate a .gitignore.in and .gitignore file in the current
-        directory.
+        <pre>
+          <code>$ gitignore.in</code>
+        </pre>
+        This will generate a <code>.gitignore.in</code> and .gitignore file in
+        the current directory in first time. And you can edit .gitignore.in file
+        and run gitignore.in command again. Then .gitignore file will be
+        updated.
       </p>
       <h2>Repository</h2>
       <p>
