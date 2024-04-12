@@ -26,6 +26,6 @@
   "devDependencies": {
     "@biomejs/biome": "^1.6.4",
     "cypress": "^13.7.3",
-    "typedoc": "^0.25.12"
+    "typedoc": "^0.25.13"
   }
 }
