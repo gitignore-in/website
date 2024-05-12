@@ -374,8 +374,8 @@ packages:
     resolution: {integrity: sha512-I/zHAwsKf9FqGoXM4WWRACob9+SNukZTd94DWF57E4toouRulbCxcUh6RKUEOQlYTHJnzkPMySvPNaaSLNfLZw==}
     engines: {node: '>=8'}
 
-  cli-table3@0.6.4:
-    resolution: {integrity: sha512-Lm3L0p+/npIQWNIiyF/nAn7T5dnOwR3xNTHXYEBFBFVPXzCVNZ5lqEC/1eo/EVfpDsQ1I+TX4ORPQgp+UI0CRw==}
+  cli-table3@0.6.5:
+    resolution: {integrity: sha512-+W/5efTR7y5HRD7gACw9yQjqMVvEMLBHmboM/kPWam+H+Hmyrgjh6YncVKK122YZkXrLudzTuAukUw9FnMf7IQ==}
     engines: {node: 10.* || >= 12.*}
 
   cli-truncate@2.1.0:
@@ -1565,7 +1565,7 @@ snapshots:
     dependencies:
       restore-cursor: 3.1.0
 
-  cli-table3@0.6.4:
+  cli-table3@0.6.5:
     dependencies:
       string-width: 4.2.3
     optionalDependencies:
@@ -1620,7 +1620,7 @@ snapshots:
       chalk: 4.1.2
       check-more-types: 2.24.0
       cli-cursor: 3.1.0
-      cli-table3: 0.6.4
+      cli-table3: 0.6.5
       commander: 6.2.1
       common-tags: 1.8.2
       dayjs: 1.11.11
