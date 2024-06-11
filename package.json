@@ -24,7 +24,7 @@
     "typescript": "5.4.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.8.0",
+    "@biomejs/biome": "^1.8.1",
     "cypress": "^13.11.0",
     "typedoc": "^0.25.13"
   }
