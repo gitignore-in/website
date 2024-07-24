@@ -49,7 +49,7 @@ importers:
         specifier: ^13.13.1
         version: 13.13.1
       typedoc:
-        specifier: ^0.26.4
+        specifier: ^0.26.5
         version: 0.26.5(typescript@5.5.4)
 
 packages:
