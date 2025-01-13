@@ -16,7 +16,7 @@
     "@types/react-dom": "19.0.3",
     "autoprefixer": "10.4.20",
     "next": "15.1.4",
-    "postcss": "8.4.49",
+    "postcss": "8.5.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-markdown": "^9.0.3",
