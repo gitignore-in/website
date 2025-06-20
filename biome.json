@@ -39,7 +39,6 @@
       "!**/out/**",
       "!**/node_modules/**",
       "!**/typedocs/**",
-      "!**/.next/**",
       "!**/build/**",
       "!**/pnpm-lock.yaml"
     ]
