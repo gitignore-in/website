@@ -7,6 +7,5 @@ gibo dump Linux
 gibo dump Windows
 gibo dump macOS
 gibo dump Node
-gi nextjs
 echo 'cypress/videos/'
 echo 'cypress/screenshots/'

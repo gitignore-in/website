@@ -1,3 +1,5 @@
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
@@ -49,3 +51,12 @@ export default function Home() {
     <ReactMarkdown remarkPlugins={[remarkGfm]}>{README_MARKDOWN}</ReactMarkdown>
   )
 }
+
+// biome-ignore lint/style/noNonNullAssertion: root must be present in the document
+const mountTo = document.getElementById('root')!
+
+ReactDOM.createRoot(mountTo).render(
+  <React.StrictMode>
+    <Home />
+  </React.StrictMode>,
+)
