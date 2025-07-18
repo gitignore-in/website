@@ -19,7 +19,7 @@
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "typescript": "5.8.3",
-    "vite": "^7.0.4"
+    "vite": "^7.0.5"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.1",
