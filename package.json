@@ -25,6 +25,6 @@
     "@biomejs/biome": "^2.2.2",
     "@vitejs/plugin-react-swc": "^4.0.1",
     "cypress": "^15.0.0",
-    "typedoc": "^0.28.11"
+    "typedoc": "^0.28.12"
   }
 }
