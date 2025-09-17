@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",
-    "@vitejs/plugin-react-swc": "^4.0.1",
+    "@vitejs/plugin-react-swc": "^4.1.0",
     "cypress": "^15.2.0",
     "typedoc": "^0.28.13"
   }
