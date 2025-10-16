@@ -11,7 +11,7 @@
     "format": "biome check --write ."
   },
   "dependencies": {
-    "@types/node": "24.7.2",
+    "@types/node": "24.8.0",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "react": "19.2.0",
