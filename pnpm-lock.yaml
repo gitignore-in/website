@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@types/node':
-        specifier: 24.9.0
-        version: 24.9.0
+        specifier: 24.9.1
+        version: 24.9.1
       '@types/react':
         specifier: 19.2.2
         version: 19.2.2
@@ -34,14 +34,14 @@ importers:
         version: 5.9.3
       vite:
         specifier: ^7.1.11
-        version: 7.1.11(@types/node@24.9.0)(yaml@2.8.1)
+        version: 7.1.11(@types/node@24.9.1)(yaml@2.8.1)
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.2.6
         version: 2.2.6
       '@vitejs/plugin-react-swc':
         specifier: ^4.1.0
-        version: 4.1.0(vite@7.1.11(@types/node@24.9.0)(yaml@2.8.1))
+        version: 4.1.0(vite@7.1.11(@types/node@24.9.1)(yaml@2.8.1))
       cypress:
         specifier: ^15.5.0
         version: 15.5.0
@@ -491,8 +491,8 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
-  '@types/node@24.9.0':
-    resolution: {integrity: sha512-MKNwXh3seSK8WurXF7erHPJ2AONmMwkI7zAMrXZDPIru8jRqkk6rGDBVbw4mLwfqA+ZZliiDPg05JQ3uW66tKQ==}
+  '@types/node@24.9.1':
+    resolution: {integrity: sha512-QoiaXANRkSXK6p0Duvt56W208du4P9Uye9hWLWgGMDTEoKPhuenzNcC4vGUmrNkiOKTlIrBoyNQYNpSwfEZXSg==}
 
   '@types/react-dom@19.2.2':
     resolution: {integrity: sha512-9KQPoO6mZCi7jcIStSnlOWn2nEF3mNmyr3rIAsGnAbQKYbRLyqmeSc39EVgtxXVia+LMT8j3knZLAZAh+xLmrw==}
@@ -1900,7 +1900,7 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
-  '@types/node@24.9.0':
+  '@types/node@24.9.1':
     dependencies:
       undici-types: 7.16.0
 
@@ -1924,16 +1924,16 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 24.9.0
+      '@types/node': 24.9.1
     optional: true
 
   '@ungap/structured-clone@1.3.0': {}
 
-  '@vitejs/plugin-react-swc@4.1.0(vite@7.1.11(@types/node@24.9.0)(yaml@2.8.1))':
+  '@vitejs/plugin-react-swc@4.1.0(vite@7.1.11(@types/node@24.9.1)(yaml@2.8.1))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.35
       '@swc/core': 1.13.5
-      vite: 7.1.11(@types/node@24.9.0)(yaml@2.8.1)
+      vite: 7.1.11(@types/node@24.9.1)(yaml@2.8.1)
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -3239,7 +3239,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite@7.1.11(@types/node@24.9.0)(yaml@2.8.1):
+  vite@7.1.11(@types/node@24.9.1)(yaml@2.8.1):
     dependencies:
       esbuild: 0.25.11
       fdir: 6.5.0(picomatch@4.0.3)
@@ -3248,7 +3248,7 @@ snapshots:
       rollup: 4.52.5
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 24.9.0
+      '@types/node': 24.9.1
       fsevents: 2.3.3
       yaml: 2.8.1
 
