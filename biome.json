@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
@@ -36,10 +36,10 @@
   "files": {
     "includes": [
       "**",
-      "!**/out/**",
-      "!**/node_modules/**",
-      "!**/typedocs/**",
-      "!**/build/**",
+      "!**/out",
+      "!**/node_modules",
+      "!**/typedocs",
+      "!**/build",
       "!**/pnpm-lock.yaml"
     ]
   }
