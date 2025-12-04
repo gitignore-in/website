@@ -43,8 +43,8 @@ importers:
         specifier: ^4.2.2
         version: 4.2.2(vite@7.2.6(@types/node@24.10.1)(yaml@2.8.2))
       cypress:
-        specifier: ^15.7.0
-        version: 15.7.0
+        specifier: ^15.7.1
+        version: 15.7.1
       typedoc:
         specifier: ^0.28.15
         version: 0.28.15(typescript@5.9.3)
@@ -699,8 +699,8 @@ packages:
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
 
-  cypress@15.7.0:
-    resolution: {integrity: sha512-1C81zKxnQckYm2XGi37rPV4rN0bzUoWhydhKdOyshJn5gJKszEx5as9VLSZI0jp0ye49QxmnbU4TtMpcD+OmGQ==}
+  cypress@15.7.1:
+    resolution: {integrity: sha512-U3sYnJ+Cnpgr6IPycxsznTg//mGVXfPGeGV+om7VQCyp5XyVkhG4oPr3X3hTq1+OB0Om0O5DxusYmt7cbvwqMQ==}
     engines: {node: ^20.1.0 || ^22.0.0 || >=24.0.0}
     hasBin: true
 
@@ -2073,7 +2073,7 @@ snapshots:
 
   csstype@3.2.3: {}
 
-  cypress@15.7.0:
+  cypress@15.7.1:
     dependencies:
       '@cypress/request': 3.0.9
       '@cypress/xvfb': 1.2.4(supports-color@8.1.1)
