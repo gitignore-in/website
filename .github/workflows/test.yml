@@ -15,8 +15,6 @@ jobs:
       - uses: actions/checkout@v6
 
       - uses: pnpm/action-setup@v5.0.0
-        with:
-          version: 10.33.0
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -42,14 +40,3 @@ jobs:
         with:
           build: pnpm build
           start: pnpm dev
-
-      - name: Upload coverage to Codecov
-        if: matrix.node-version == '24.x'
-        uses: codecov/codecov-action@v6
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: coverage/cobertura-coverage.xml
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
-          verbose: true
