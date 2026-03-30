@@ -1,0 +1,60 @@
+name: octocov
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  octocov:
+    runs-on: ubuntu-latest
+    env:
+      CYPRESS_COVERAGE: "true"
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v5.0.0
+        with:
+          version: 10.33.0
+
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
+
+      - name: Install Cypress binary
+        run: pnpm exec cypress install
+
+      - name: Test with coverage
+        uses: cypress-io/github-action@v5
+        with:
+          install: false
+          build: pnpm build
+          start: pnpm dev
+          command: pnpm test:coverage
+
+      - name: Build coverage report
+        run: pnpm coverage:report
+
+      - name: Report coverage with octocov
+        uses: k1LoW/octocov-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          config: .octocov.yml

@@ -42,14 +42,3 @@ jobs:
         with:
           build: pnpm build
           start: pnpm dev
-
-      - name: Upload coverage to Codecov
-        if: matrix.node-version == '24.x'
-        uses: codecov/codecov-action@v6
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: coverage/cobertura-coverage.xml
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
-          verbose: true
