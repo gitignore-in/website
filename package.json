@@ -29,7 +29,7 @@
     "@cypress/code-coverage": "^4.0.3",
     "@vitejs/plugin-react-swc": "^4.3.0",
     "cypress": "^15.13.0",
-    "esbuild": "^0.27.4",
+    "esbuild": "^0.28.0",
     "nyc": "^18.0.0",
     "typedoc": "^0.28.18",
     "vite-plugin-istanbul": "^8.0.0"
