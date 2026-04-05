@@ -1,6 +1,7 @@
 name: Publish Website
 
 on:
+  pull_request:
   push:
     branches:
       - main
@@ -25,6 +26,7 @@ jobs:
       - run: pnpm build
 
       - uses: peaceiris/actions-gh-pages@v4
+        if: github.event_name == 'push'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./out
