@@ -14,29 +14,24 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v5.0.0
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
+          bun-version: 1.3.11
 
       - name: Install dependencies
-        run: pnpm install
+        run: bun install --frozen-lockfile
 
       - name: Check all
-        run: pnpm lint
+        run: bun run lint
 
       - name: Build
-        run: pnpm build
+        run: bun run build
 
       - name: Install Cypress binary
-        run: pnpm exec cypress install
+        run: bun x cypress install
 
       - name: E2E Test
         uses: cypress-io/github-action@v5
         with:
-          build: pnpm build
-          start: pnpm dev
+          build: bun run build
+          start: bun run dev
