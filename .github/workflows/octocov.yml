@@ -19,37 +19,40 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v5.0.0
-
-      - name: Use Node.js 24.x
-        uses: actions/setup-node@v6
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 24.14.1
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
+          bun-version: 1.3.11
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Lint
-        run: pnpm lint
+        run: bun run lint
 
       - name: Build
-        run: pnpm build
+        run: bun run build
 
       - name: Install Cypress binary
-        run: pnpm exec cypress install
+        run: bun x cypress install
 
       - name: Test with coverage
-        uses: cypress-io/github-action@v5
-        with:
-          install: false
-          build: pnpm build
-          start: pnpm dev
-          command: pnpm test:coverage
+        run: |
+          bun x vite preview --host 127.0.0.1 --port 3000 >/tmp/gitignore-in-website-vite.log 2>&1 &
+          vite_pid=$!
+          trap 'kill $vite_pid; cat /tmp/gitignore-in-website-vite.log' EXIT
+
+          for _ in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:3000 >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+
+          curl --fail --silent http://127.0.0.1:3000 >/dev/null
+          bun run test:coverage
 
       - name: Build coverage report
-        run: pnpm coverage:report
+        run: bun run coverage:report
 
       - name: Report coverage with octocov
         uses: k1LoW/octocov-action@v1
