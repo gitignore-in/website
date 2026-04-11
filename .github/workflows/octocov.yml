@@ -37,9 +37,9 @@ jobs:
 
       - name: Test with coverage
         run: |
-          bun run dev >/tmp/gitignore-in-website-vite.log 2>&1 &
+          bun x vite preview --host 127.0.0.1 --port 3000 >/tmp/gitignore-in-website-vite.log 2>&1 &
           vite_pid=$!
-          trap 'kill $vite_pid' EXIT
+          trap 'kill $vite_pid; cat /tmp/gitignore-in-website-vite.log' EXIT
 
           for _ in $(seq 1 60); do
             if curl --fail --silent http://127.0.0.1:3000 >/dev/null; then
