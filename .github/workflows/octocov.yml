@@ -36,12 +36,20 @@ jobs:
         run: bun x cypress install
 
       - name: Test with coverage
-        uses: cypress-io/github-action@v5
-        with:
-          install: false
-          build: bun run build
-          start: bun run dev
-          command: bun run test:coverage
+        run: |
+          bun run dev >/tmp/gitignore-in-website-vite.log 2>&1 &
+          vite_pid=$!
+          trap 'kill $vite_pid' EXIT
+
+          for _ in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:3000 >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+
+          curl --fail --silent http://127.0.0.1:3000 >/dev/null
+          bun run test:coverage
 
       - name: Build coverage report
         run: bun run coverage:report
