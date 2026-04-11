@@ -21,7 +21,7 @@
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "typescript": "6.0.2",
-    "vite": "^8.0.7"
+    "vite": "^8.0.8"
   },
   "devDependencies": {
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.8",
