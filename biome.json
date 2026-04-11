@@ -38,6 +38,7 @@
       "**",
       "!**/out",
       "!**/node_modules",
+      "!**/.nyc_output",
       "!**/typedocs",
       "!**/build",
       "!**/pnpm-lock.yaml"
