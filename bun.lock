@@ -23,7 +23,7 @@
         "cypress": "^15.13.1",
         "esbuild": "^0.28.0",
         "nyc": "^18.0.0",
-        "typedoc": "^0.28.18",
+        "typedoc": "^0.28.19",
         "vite-plugin-istanbul": "^8.0.0",
       },
     },
