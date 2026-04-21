@@ -28,7 +28,7 @@
     "@biomejs/biome": "^2.4.12",
     "@cypress/code-coverage": "^4.0.3",
     "@vitejs/plugin-react-swc": "^4.3.0",
-    "cypress": "^15.14.0",
+    "cypress": "^15.14.1",
     "esbuild": "^0.28.0",
     "nyc": "^18.0.0",
     "typedoc": "^0.28.19",
