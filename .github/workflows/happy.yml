@@ -12,6 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     name: happy
     steps:
-      - uses: kitsuyui/happy-commit@v0.9
+      - uses: kitsuyui/happy-commit@b8724714862e1b643122b8f233b3aaca26b9825d # v0.9
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
