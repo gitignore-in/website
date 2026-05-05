@@ -11,7 +11,6 @@ jobs:
   happy:
     runs-on: ubuntu-latest
     name: happy
-    continue-on-error: true
     steps:
       - uses: kitsuyui/happy-commit@v0.9
         with:
