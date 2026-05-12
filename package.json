@@ -6,7 +6,8 @@
     "dev": "vite dev --port 3000",
     "build": "vite build",
     "start": "vite preview --port 3000",
-    "lint": "biome check .",
+    "lint": "biome check . && bun run check:readme",
+    "check:readme": "bun scripts/check-readme-sync.ts",
     "test": "cypress run",
     "test:coverage": "cypress run",
     "coverage:report": "nyc report --reporter=cobertura --report-dir coverage",
@@ -19,6 +20,7 @@
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-markdown": "^10.1.0",
+    "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "typescript": "6.0.3",
     "vite": "^8.0.11"
