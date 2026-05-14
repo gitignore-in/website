@@ -23,7 +23,7 @@
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "typescript": "6.0.3",
-    "vite": "^8.0.12"
+    "vite": "^8.0.13"
   },
   "devDependencies": {
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.8",
