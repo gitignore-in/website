@@ -3,7 +3,9 @@ import { readFile } from 'node:fs/promises'
 const sourceUrl =
   'https://raw.githubusercontent.com/gitignore-in/gitignore-in/main/README.md'
 
-const response = await fetch(sourceUrl)
+const response = await fetch(sourceUrl, {
+  signal: AbortSignal.timeout(10_000),
+})
 if (!response.ok) {
   throw new Error(
     `Failed to fetch upstream README: ${response.status} ${response.statusText}`,
