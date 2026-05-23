@@ -5,6 +5,11 @@ import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
 import readmeMarkdown from './readme.md?raw'
 
+// rehype-raw is intentionally enabled so that the upstream README's raw HTML
+// elements (e.g. <img> tags for concept diagrams) render correctly.
+// Trust model: src/readme.md is kept in sync with gitignore-in/gitignore-in
+// main branch README via scripts/check-readme-sync.ts. Any raw HTML that
+// the upstream README introduces will be executed in the browser as-is.
 export default function Home() {
   return (
     <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
