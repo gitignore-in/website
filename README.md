@@ -18,6 +18,11 @@ bun run lint       # Biome check + readme sync check
 bun run build      # production build
 ```
 
+`bun run lint` runs Biome and verifies that `src/readme.md` matches the
+upstream `gitignore-in/gitignore-in` README at the pinned commit in
+`scripts/check-readme-sync.ts`. The README sync check fetches that upstream
+file over the network, so lint requires network access.
+
 ## Deployment
 
 See [DEPLOYING.md](./DEPLOYING.md) for the deployment process and rollback instructions.
