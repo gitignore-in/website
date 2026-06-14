@@ -18,6 +18,7 @@ permissions:
 jobs:
   octocov:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       CYPRESS_COVERAGE: "true"
     steps:
