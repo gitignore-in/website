@@ -16,6 +16,7 @@ describe('App Home', () => {
     cy.visit('http://localhost:3000')
     cy.get('link[rel="icon"]')
       .should('have.attr', 'type', 'image/svg+xml')
-      .and('have.attr', 'href', '/favicon.svg')
+      // Vite's `base: './'` rewrites the built link href to a relative path.
+      .and('have.attr', 'href', './favicon.svg')
   })
 })
