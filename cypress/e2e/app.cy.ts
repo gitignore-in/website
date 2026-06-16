@@ -8,4 +8,12 @@ describe('App Home', () => {
       .should('have.attr', 'src')
       .and('include', 'github.com/gitignore-in/gitignore-in/assets')
   })
+
+  it('should serve the SVG favicon', () => {
+    cy.request('/favicon.svg').its('status').should('eq', 200)
+    cy.visit('http://localhost:3000')
+    cy.get('link[rel="icon"]')
+      .should('have.attr', 'type', 'image/svg+xml')
+      .and('have.attr', 'href', '/favicon.svg')
+  })
 })
