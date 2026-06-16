@@ -10,7 +10,9 @@ describe('App Home', () => {
   })
 
   it('should serve the SVG favicon', () => {
-    cy.request('/favicon.svg').its('status').should('eq', 200)
+    cy.request('http://localhost:3000/favicon.svg')
+      .its('status')
+      .should('eq', 200)
     cy.visit('http://localhost:3000')
     cy.get('link[rel="icon"]')
       .should('have.attr', 'type', 'image/svg+xml')
