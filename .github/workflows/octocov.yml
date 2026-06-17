@@ -43,16 +43,9 @@ jobs:
         run: |
           bun x vite preview --host 127.0.0.1 --port 3000 >/tmp/gitignore-in-website-vite.log 2>&1 &
           vite_pid=$!
-          trap 'kill $vite_pid; cat /tmp/gitignore-in-website-vite.log' EXIT
+          trap 'kill $vite_pid 2>/dev/null; wait $vite_pid 2>/dev/null || true; cat /tmp/gitignore-in-website-vite.log' EXIT
 
-          for _ in $(seq 1 60); do
-            if curl --fail --silent http://127.0.0.1:3000 >/dev/null; then
-              break
-            fi
-            sleep 1
-          done
-
-          curl --fail --silent http://127.0.0.1:3000 >/dev/null
+          bun x wait-on http://127.0.0.1:3000 --timeout 60000
           bun run test:coverage
 
       - name: Build coverage report
