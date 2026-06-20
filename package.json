@@ -14,7 +14,7 @@
     "format": "biome check --write ."
   },
   "dependencies": {
-    "@types/node": "25.8.0",
+    "@types/node": "25.9.3",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "react": "19.2.6",
@@ -27,11 +27,11 @@
   },
   "devDependencies": {
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.8",
-    "@biomejs/biome": "^2.4.15",
+    "@biomejs/biome": "^2.5.0",
     "@cypress/code-coverage": "^4.0.3",
     "@vitejs/plugin-react-swc": "^4.3.1",
     "cypress": "^15.17.0",
-    "esbuild": "^0.28.0",
+    "esbuild": "^0.28.1",
     "nyc": "^18.0.0",
     "vite-plugin-istanbul": "^9.0.0"
   },
