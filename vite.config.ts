@@ -22,6 +22,7 @@ export default defineConfig(async () => {
         extension: ['.ts', '.tsx'],
         requireEnv: true,
         cypress: true,
+        forceBuildInstrument: true,
       }),
     ],
     publicDir: resolve(__dirname, 'public'),
