@@ -17,7 +17,9 @@ const [upstreamReadme, localReadme] = await Promise.all([
   readFile(new URL('../src/readme.md', import.meta.url), 'utf8'),
 ])
 
-if (localReadme !== upstreamReadme) {
+const normalize = (text: string) => text.normalize('NFC').replace(/\r\n/g, '\n')
+
+if (normalize(localReadme) !== normalize(upstreamReadme)) {
   throw new Error(
     'src/readme.md is out of sync with gitignore-in/gitignore-in README.md',
   )
