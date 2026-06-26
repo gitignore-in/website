@@ -35,14 +35,17 @@ const normalize = (text: string) => text.normalize('NFC').replace(/\r\n/g, '\n')
 export const fetchUpstreamReadme = async (
   fetcher: Fetcher = fetch,
 ): Promise<string> => {
-  const response = await fetcher(sourceUrl, {
-    signal: AbortSignal.timeout(10_000),
-  }).catch((cause: unknown) => {
+  let response: Response
+  try {
+    response = await fetcher(sourceUrl, {
+      signal: AbortSignal.timeout(10_000),
+    })
+  } catch (cause) {
     throw new Error(
       `Failed to fetch upstream README at ${upstreamReadmeCommit}: ${cause}`,
       { cause },
     )
-  })
+  }
 
   if (!response.ok) {
     throw new Error(
@@ -59,10 +62,21 @@ export const checkReadmeSync = async (
   fetcher: Fetcher = fetch,
   readLocalReadme: LocalReadmeReader = () => readFile(localReadmeUrl, 'utf8'),
 ): Promise<void> => {
-  const [upstreamReadme, localReadme] = await Promise.all([
-    fetchUpstreamReadme(fetcher),
-    readLocalReadme(),
-  ])
+  let upstreamReadme = ''
+  let localReadme = ''
+  try {
+    ;[upstreamReadme, localReadme] = await Promise.all([
+      fetchUpstreamReadme(fetcher),
+      readLocalReadme(),
+    ])
+  } catch (err) {
+    throw (err as NodeJS.ErrnoException).code === 'ENOENT'
+      ? new Error(
+          'src/readme.md not found; run `git checkout src/readme.md` to restore',
+          { cause: err },
+        )
+      : err
+  }
 
   if (normalize(localReadme) !== normalize(upstreamReadme)) {
     throw new Error(
