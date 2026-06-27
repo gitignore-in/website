@@ -15,6 +15,8 @@ Source code for [gitignore.in](https://gitignore.in) — a web interface for gen
 bun install
 bun run dev        # http://localhost:3000
 bun run lint       # Biome check + readme sync check
+bun run format     # auto-format with Biome
+bun run test       # run Cypress E2E tests
 bun run build      # production build
 ```
 
