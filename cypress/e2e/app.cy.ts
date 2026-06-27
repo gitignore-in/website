@@ -1,6 +1,6 @@
 describe('App Home', () => {
   it('should render the home page', () => {
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
     cy.contains('h1', 'gitignore.in')
     cy.contains('h2', 'Motivation')
     cy.contains('h2', 'Solution')
@@ -10,10 +10,8 @@ describe('App Home', () => {
   })
 
   it('should serve the SVG favicon', () => {
-    cy.request('http://localhost:3000/favicon.svg')
-      .its('status')
-      .should('eq', 200)
-    cy.visit('http://localhost:3000')
+    cy.request('/favicon.svg').its('status').should('eq', 200)
+    cy.visit('/')
     cy.get('link[rel="icon"]')
       .should('have.attr', 'type', 'image/svg+xml')
       // Vite's `base: './'` rewrites the built link href to a relative path.
