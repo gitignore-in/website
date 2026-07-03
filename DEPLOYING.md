@@ -7,7 +7,8 @@ This site uses continuous deployment via GitHub Actions:
 1. A pull request is opened against `main`
 2. CI (lint, build) runs on the PR
 3. After merging to `main`, the [`Publish Website`](https://github.com/gitignore-in/website/actions/workflows/publish.yml) workflow:
-   - Runs `bun install` and `bun run build`
+   - Runs `bun install`, `bun run check:readme`, and `bun run build`
+   - Stops before publishing if the vendored README is stale
    - Pushes the built output to the `gh-pages` branch via `peaceiris/actions-gh-pages`
 4. GitHub Pages serves the `gh-pages` branch at [gitignore.in](https://gitignore.in)
 
