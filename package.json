@@ -8,8 +8,9 @@
     "start": "vite preview --port 3000",
     "lint": "biome check . && bun run check:readme",
     "check:readme": "bun scripts/check-readme-sync.ts",
-    "test": "cypress run",
-    "test:coverage": "cypress run",
+    "test": "bun run test:unit && cypress run",
+    "test:unit": "bun test scripts/check-readme-sync.test.ts",
+    "test:coverage": "bun run test:unit && cypress run",
     "coverage:report": "nyc report --reporter=cobertura --report-dir coverage",
     "format": "biome check --write ."
   },
