@@ -11,6 +11,25 @@ export const sourceUrl = `https://raw.githubusercontent.com/gitignore-in/gitigno
 
 const localReadmeUrl = new URL('../src/readme.md', import.meta.url)
 
+const readResponseText = async (response: Response): Promise<string> => {
+  try {
+    return await response.text()
+  } catch (cause) {
+    throw new Error(
+      `Failed to read upstream README at ${upstreamReadmeCommit}: ${cause}`,
+      { cause },
+    )
+  }
+}
+
+const assertResponseBodyIsNotEmpty = (upstreamReadme: string) => {
+  if (upstreamReadme.length === 0) {
+    throw new Error(
+      `Failed to fetch upstream README at ${upstreamReadmeCommit}: response body was empty`,
+    )
+  }
+}
+
 export const fetchUpstreamReadme = async (
   fetcher: Fetcher = fetch,
 ): Promise<string> => {
@@ -29,7 +48,9 @@ export const fetchUpstreamReadme = async (
     )
   }
 
-  return response.text()
+  const upstreamReadme = await readResponseText(response)
+  assertResponseBodyIsNotEmpty(upstreamReadme)
+  return upstreamReadme
 }
 
 export const checkReadmeSync = async (
