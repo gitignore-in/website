@@ -3,7 +3,6 @@ coverage:
   acceptable: current >= 80%
   paths:
     - coverage/cobertura-coverage.xml
-  acceptable: "current >= 80%"
 codeToTestRatio:
   code:
     - "src/**/*.ts"
