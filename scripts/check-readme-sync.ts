@@ -22,8 +22,6 @@ const readResponseText = async (response: Response): Promise<string> => {
   }
 }
 
-const normalize = (text: string) => text.normalize('NFC').replace(/\r\n/g, '\n')
-
 const assertResponseBodyIsNotEmpty = (upstreamReadme: string) => {
   if (upstreamReadme.length === 0) {
     throw new Error(
@@ -31,6 +29,8 @@ const assertResponseBodyIsNotEmpty = (upstreamReadme: string) => {
     )
   }
 }
+
+const normalize = (text: string) => text.normalize('NFC').replace(/\r\n/g, '\n')
 
 export const fetchUpstreamReadme = async (
   fetcher: Fetcher = fetch,
