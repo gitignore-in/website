@@ -30,6 +30,8 @@ const assertResponseBodyIsNotEmpty = (upstreamReadme: string) => {
   }
 }
 
+const normalize = (text: string) => text.normalize('NFC').replace(/\r\n/g, '\n')
+
 export const fetchUpstreamReadme = async (
   fetcher: Fetcher = fetch,
 ): Promise<string> => {
@@ -62,7 +64,7 @@ export const checkReadmeSync = async (
     readLocalReadme(),
   ])
 
-  if (localReadme !== upstreamReadme) {
+  if (normalize(localReadme) !== normalize(upstreamReadme)) {
     throw new Error(
       'src/readme.md is out of sync with gitignore-in/gitignore-in README.md',
     )
