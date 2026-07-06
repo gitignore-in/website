@@ -1,6 +1,5 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
@@ -21,7 +20,6 @@
         "useSelfClosingElements": "error",
         "useSingleVarDeclarator": "error",
         "noUnusedTemplateLiteral": "error",
-        "useNumberNamespace": "error",
         "noInferrableTypes": "error",
         "noUselessElse": "error"
       }
@@ -38,18 +36,18 @@
       "enabled": true,
       "semicolons": "asNeeded",
       "quoteStyle": "single",
-      "trailingCommas": "all"
+      "trailingComma": "all"
     }
   },
   "files": {
-    "includes": [
-      "**",
-      "!**/out",
-      "!**/node_modules",
-      "!**/.tmp",
-      "!**/.nyc_output",
-      "!**/build",
-      "!**/pnpm-lock.yaml"
+    "include": ["**"],
+    "ignore": [
+      "out",
+      "node_modules",
+      ".tmp",
+      ".nyc_output",
+      "build",
+      "pnpm-lock.yaml"
     ]
   }
 }
