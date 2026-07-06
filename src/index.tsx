@@ -4,15 +4,17 @@ import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
 import readmeMarkdown from './readme.md?raw'
+import { rehypeTrustBoundarySanitize } from './rehype-sanitize'
 
-// rehype-raw is intentionally enabled so that the upstream README's raw HTML
-// elements (e.g. <img> tags for concept diagrams) render correctly.
-// Trust model: src/readme.md is checked against gitignore-in/gitignore-in's
-// main branch README in CI and the publish workflow. Any raw HTML that the
-// upstream README introduces will be executed in the browser as-is.
+// rehype-raw is still needed so the upstream README's trusted HTML fragments
+// are parsed into the markdown tree, but the local sanitizer strips unsafe
+// tags and attributes before they reach the DOM.
 export default function Home() {
   return (
-    <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      rehypePlugins={[rehypeRaw, rehypeTrustBoundarySanitize]}
+    >
       {readmeMarkdown}
     </ReactMarkdown>
   )
