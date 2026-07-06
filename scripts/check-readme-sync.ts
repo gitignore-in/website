@@ -40,6 +40,17 @@ const assertResponseBodyIsNotEmpty = (upstreamReadme: string) => {
 
 const normalize = (text: string) => text.normalize('NFC').replace(/\r\n/g, '\n')
 
+const mapReadLocalReadmeError = (err: unknown) => {
+  if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+    throw new Error(
+      'src/readme.md not found; run `git checkout src/readme.md` to restore',
+      { cause: err },
+    )
+  }
+
+  throw err
+}
+
 export const fetchUpstreamReadme = async (
   fetcher: Fetcher = fetch,
 ): Promise<string> => {
@@ -66,12 +77,7 @@ const readLocalReadmeWithContext = async (
   try {
     return await readLocalReadme()
   } catch (err) {
-    throw (err as NodeJS.ErrnoException).code === 'ENOENT'
-      ? new Error(
-          'src/readme.md not found; run `git checkout src/readme.md` to restore',
-          { cause: err },
-        )
-      : err
+    return mapReadLocalReadmeError(err)
   }
 }
 
