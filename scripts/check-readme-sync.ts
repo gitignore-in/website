@@ -22,6 +22,14 @@ const readResponseText = async (response: Response): Promise<string> => {
   }
 }
 
+const assertFetchResponseOk = (response: Response) => {
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch upstream README at ${upstreamReadmeCommit}: ${response.status} ${response.statusText}`,
+    )
+  }
+}
+
 const assertResponseBodyIsNotEmpty = (upstreamReadme: string) => {
   if (upstreamReadme.length === 0) {
     throw new Error(
@@ -32,27 +40,45 @@ const assertResponseBodyIsNotEmpty = (upstreamReadme: string) => {
 
 const normalize = (text: string) => text.normalize('NFC').replace(/\r\n/g, '\n')
 
+const mapReadLocalReadmeError = (err: unknown) => {
+  if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+    throw new Error(
+      'src/readme.md not found; run `git checkout src/readme.md` to restore',
+      { cause: err },
+    )
+  }
+
+  throw err
+}
+
 export const fetchUpstreamReadme = async (
   fetcher: Fetcher = fetch,
 ): Promise<string> => {
-  const response = await fetcher(sourceUrl, {
-    signal: AbortSignal.timeout(10_000),
-  }).catch((cause: unknown) => {
+  try {
+    const response = await fetcher(sourceUrl, {
+      signal: AbortSignal.timeout(10_000),
+    })
+    assertFetchResponseOk(response)
+
+    const upstreamReadme = await readResponseText(response)
+    assertResponseBodyIsNotEmpty(upstreamReadme)
+    return upstreamReadme
+  } catch (cause) {
     throw new Error(
       `Failed to fetch upstream README at ${upstreamReadmeCommit}: ${cause}`,
       { cause },
     )
-  })
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch upstream README at ${upstreamReadmeCommit}: ${response.status} ${response.statusText}`,
-    )
   }
+}
 
-  const upstreamReadme = await readResponseText(response)
-  assertResponseBodyIsNotEmpty(upstreamReadme)
-  return upstreamReadme
+const readLocalReadmeWithContext = async (
+  readLocalReadme: LocalReadmeReader,
+) => {
+  try {
+    return await readLocalReadme()
+  } catch (err) {
+    return mapReadLocalReadmeError(err)
+  }
 }
 
 export const checkReadmeSync = async (
@@ -61,7 +87,7 @@ export const checkReadmeSync = async (
 ): Promise<void> => {
   const [upstreamReadme, localReadme] = await Promise.all([
     fetchUpstreamReadme(fetcher),
-    readLocalReadme(),
+    readLocalReadmeWithContext(readLocalReadme),
   ])
 
   if (normalize(localReadme) !== normalize(upstreamReadme)) {

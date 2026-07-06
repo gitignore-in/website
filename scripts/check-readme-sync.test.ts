@@ -55,3 +55,31 @@ test('reports upstream body read failures before comparing content', async () =>
     `Failed to read upstream README at ${upstreamReadmeCommit}: Error: stream interrupted`,
   )
 })
+
+test('reports local README missing with restoration guidance', async () => {
+  await expect(
+    checkReadmeSync(
+      async () => new Response('readme'),
+      async () => {
+        const error = new Error('missing')
+        ;(error as NodeJS.ErrnoException).code = 'ENOENT'
+        throw error
+      },
+    ),
+  ).rejects.toThrow(
+    'src/readme.md not found; run `git checkout src/readme.md` to restore',
+  )
+})
+
+test('reports fetch timeouts with upstream context', async () => {
+  await expect(
+    checkReadmeSync(
+      async () => {
+        throw new Error('The operation was aborted.')
+      },
+      async () => 'readme',
+    ),
+  ).rejects.toThrow(
+    `Failed to fetch upstream README at ${upstreamReadmeCommit}: Error: The operation was aborted.`,
+  )
+})
