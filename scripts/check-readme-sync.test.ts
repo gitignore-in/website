@@ -244,3 +244,32 @@ test('drops forbidden elements and unwraps unknown containers', () => {
   })
   expect(tree.children[1]).toMatchObject({ type: 'text', value: 'kept' })
 })
+
+test('preserves non-element nodes and sanitizes their child arrays', () => {
+  expect(
+    sanitizeReadmeHtmlTree({
+      type: 'text',
+      value: 'plain text node',
+    } as never),
+  ).toEqual({
+    type: 'text',
+    value: 'plain text node',
+  })
+
+  expect(
+    sanitizeReadmeHtmlTree({
+      type: 'text',
+      children: [
+        { type: 'text', value: 'before' },
+        { type: 'element', tagName: 'script', children: [] },
+        { type: 'text', value: 'after' },
+      ],
+    } as never),
+  ).toEqual({
+    type: 'text',
+    children: [
+      { type: 'text', value: 'before' },
+      { type: 'text', value: 'after' },
+    ],
+  })
+})
