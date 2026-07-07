@@ -264,6 +264,41 @@ test('keeps safe urls and adds rel on target blank links', () => {
   })
 })
 
+test('rejects malformed image urls containing spaces', () => {
+  const tree = sanitizeReadmeHtmlTree({
+    type: 'root',
+    children: [
+      {
+        type: 'element',
+        tagName: 'img',
+        properties: {
+          src: 'https://exa mple.com/bad.png',
+          alt: 'broken url',
+        },
+      },
+    ],
+  })
+
+  expect(tree.children[0]).toMatchObject({
+    type: 'element',
+    tagName: 'img',
+    properties: {
+      alt: 'broken url',
+    },
+    children: [],
+  })
+})
+
+test('throws when called with non-root element input', () => {
+  expect(() =>
+    sanitizeReadmeHtmlTree({
+      type: 'element',
+      tagName: 'div',
+      children: [],
+    } as never),
+  ).toThrow('sanitizeReadmeHtmlTree expected a root node')
+})
+
 test('drops forbidden elements and unwraps unknown containers', () => {
   const tree = sanitizeReadmeHtmlTree({
     type: 'root',
