@@ -162,3 +162,85 @@ test('sanitizes unsafe raw html while preserving safe content', () => {
     children: [{ type: 'text', value: 'click' }],
   })
 })
+
+test('keeps safe urls and adds rel on target blank links', () => {
+  const tree = sanitizeReadmeHtmlTree({
+    type: 'root',
+    children: [
+      {
+        type: 'element',
+        tagName: 'a',
+        properties: {
+          href: 'https://example.com/path?q=1',
+          target: '_blank',
+        },
+        children: [{ type: 'text', value: 'example' }],
+      },
+      {
+        type: 'element',
+        tagName: 'img',
+        properties: {
+          src: '/images/concept.png',
+          alt: 'concept',
+        },
+        children: [],
+      },
+    ],
+  })
+
+  expect(tree.children).toHaveLength(2)
+  expect(tree.children[0]).toMatchObject({
+    type: 'element',
+    tagName: 'a',
+    properties: {
+      href: 'https://example.com/path?q=1',
+      target: '_blank',
+      rel: 'noreferrer noopener',
+    },
+  })
+  expect(tree.children[1]).toMatchObject({
+    type: 'element',
+    tagName: 'img',
+    properties: {
+      src: '/images/concept.png',
+      alt: 'concept',
+    },
+  })
+})
+
+test('drops forbidden elements and unwraps unknown containers', () => {
+  const tree = sanitizeReadmeHtmlTree({
+    type: 'root',
+    children: [
+      {
+        type: 'element',
+        tagName: 'div',
+        children: [
+          { type: 'text', value: 'before' },
+          {
+            type: 'element',
+            tagName: 'script',
+            children: [{ type: 'text', value: 'alert(1)' }],
+          },
+          { type: 'text', value: 'after' },
+        ],
+      },
+      {
+        type: 'element',
+        tagName: 'custom-element',
+        children: [{ type: 'text', value: 'kept' }],
+      },
+    ],
+  })
+
+  expect(tree.children).toHaveLength(2)
+  expect(tree.children[0]).toMatchObject({
+    type: 'element',
+    tagName: 'div',
+    children: [
+      { type: 'text', value: 'before' },
+      { type: 'text', value: 'after' },
+    ],
+  })
+  expect(tree.children[1]).toMatchObject({ type: 'text', value: 'kept' })
+})
