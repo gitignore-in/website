@@ -87,6 +87,7 @@ describe('App Home', () => {
       ],
     })
   })
+
   it('should sanitize edge-case properties without adding unsafe attributes', () => {
     const tree = sanitizeReadmeHtmlTree({
       type: 'root',
