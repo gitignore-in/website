@@ -87,4 +87,59 @@ describe('App Home', () => {
       ],
     })
   })
+
+  it('should sanitize edge-case properties without adding unsafe attributes', () => {
+    const tree = sanitizeReadmeHtmlTree({
+      type: 'root',
+      children: [
+        {
+          type: 'element',
+          tagName: 'p',
+          children: [{ type: 'text', value: 'plain paragraph' }],
+        },
+        {
+          type: 'element',
+          tagName: 'a',
+          properties: {
+            href: 'https://example.com',
+            target: '_self',
+            onClick: 'alert(1)',
+            'data-test': 'ignored',
+          },
+          children: [{ type: 'text', value: 'link' }],
+        },
+        {
+          type: 'element',
+          tagName: 'img',
+          properties: {
+            src: 42,
+            alt: 'broken',
+          },
+          children: [],
+        },
+      ],
+    })
+
+    expect(tree.children).to.have.length(3)
+    expect(tree.children[0]).to.deep.include({
+      type: 'element',
+      tagName: 'p',
+    })
+    expect(tree.children[1]).to.deep.include({
+      type: 'element',
+      tagName: 'a',
+      properties: {
+        href: 'https://example.com',
+        target: '_self',
+      },
+    })
+    expect(tree.children[1].properties).not.to.have.property('rel')
+    expect(tree.children[2]).to.deep.include({
+      type: 'element',
+      tagName: 'img',
+      properties: {
+        alt: 'broken',
+      },
+    })
+  })
 })

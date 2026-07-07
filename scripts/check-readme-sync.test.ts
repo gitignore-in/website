@@ -163,6 +163,62 @@ test('sanitizes unsafe raw html while preserving safe content', () => {
   })
 })
 
+test('covers sanitizer edge cases for empty and partial properties', () => {
+  const tree = sanitizeReadmeHtmlTree({
+    type: 'root',
+    children: [
+      {
+        type: 'element',
+        tagName: 'p',
+        children: [{ type: 'text', value: 'plain paragraph' }],
+      },
+      {
+        type: 'element',
+        tagName: 'a',
+        properties: {
+          href: 'https://example.com',
+          target: '_self',
+          onClick: 'alert(1)',
+          'data-test': 'ignored',
+        },
+        children: [{ type: 'text', value: 'link' }],
+      },
+      {
+        type: 'element',
+        tagName: 'img',
+        properties: {
+          src: 42,
+          alt: 'broken',
+        },
+        children: [],
+      },
+    ],
+  })
+
+  expect(tree.children).toHaveLength(3)
+  expect(tree.children[0]).toMatchObject({
+    type: 'element',
+    tagName: 'p',
+    children: [{ type: 'text', value: 'plain paragraph' }],
+  })
+  expect(tree.children[1]).toMatchObject({
+    type: 'element',
+    tagName: 'a',
+    properties: {
+      href: 'https://example.com',
+      target: '_self',
+    },
+  })
+  expect(tree.children[1].properties).not.toHaveProperty('rel')
+  expect(tree.children[2]).toMatchObject({
+    type: 'element',
+    tagName: 'img',
+    properties: {
+      alt: 'broken',
+    },
+  })
+})
+
 test('keeps safe urls and adds rel on target blank links', () => {
   const tree = sanitizeReadmeHtmlTree({
     type: 'root',
