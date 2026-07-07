@@ -141,4 +141,51 @@ describe('App Home', () => {
       },
     })
   })
+
+  it('should reject malformed urls, empty children, and non-root sanitizer inputs', () => {
+    const tree = sanitizeReadmeHtmlTree({
+      type: 'root',
+      children: [
+        {
+          type: 'element',
+          tagName: 'img',
+          properties: {
+            src: 'https://exa mple.com/bad.png',
+            alt: 'broken url',
+          },
+        },
+        {
+          type: 'element',
+          tagName: 'div',
+        },
+        'plain text child' as never,
+      ],
+    })
+
+    expect(tree.children).to.deep.equal([
+      {
+        type: 'element',
+        tagName: 'img',
+        properties: {
+          alt: 'broken url',
+        },
+        children: [],
+      },
+      {
+        type: 'element',
+        tagName: 'div',
+        properties: undefined,
+        children: [],
+      },
+      'plain text child',
+    ])
+
+    expect(() =>
+      sanitizeReadmeHtmlTree({
+        type: 'element',
+        tagName: 'div',
+        children: [],
+      } as never),
+    ).to.throw('sanitizeReadmeHtmlTree expected a root node')
+  })
 })
