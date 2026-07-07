@@ -105,6 +105,10 @@ const isPlainObject = (value: unknown): value is Record<string, unknown> =>
 function isSafeUrl(value: string) {
   const trimmed = value.trim()
 
+  if (/\s/.test(trimmed)) {
+    return false
+  }
+
   if (
     trimmed.startsWith('/') ||
     trimmed.startsWith('./') ||
