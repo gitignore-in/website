@@ -254,7 +254,7 @@ function sanitizeNode(node: HNode): HNode | HNode[] | null {
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: wrapper keeps the mutation point simple for rehype.
 export function sanitizeReadmeHtmlTree(tree: HNode) {
-  if (tree.type !== 'root') {
+  if (tree.type === 'element') {
     throw new Error('sanitizeReadmeHtmlTree expected a root node')
   }
 
