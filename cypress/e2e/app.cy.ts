@@ -90,4 +90,10 @@ describe('App Home', () => {
       ],
     })
   })
+
+  it('should reject a non-root tree wrapper', () => {
+    expect(() =>
+      sanitizeReadmeHtmlTree(null as never),
+    ).to.throw('sanitizeReadmeHtmlTree expected a root node')
+  })
 })
