@@ -364,3 +364,52 @@ test('preserves non-element nodes and sanitizes their child arrays', () => {
     ],
   })
 })
+
+test('normalizes tag casing and url safety edge cases', () => {
+  const tree = sanitizeReadmeHtmlTree({
+    type: 'root',
+    children: [
+      {
+        type: 'element',
+        tagName: 'A',
+        properties: {
+          HREF: '  https://example.com/path  ',
+          TARGET: '_blank',
+          ONCLICK: 'alert(1)',
+        },
+        children: [{ type: 'text', value: 'link' }],
+      },
+      {
+        type: 'element',
+        tagName: 'img',
+        properties: {
+          SRC: 'ftp://example.com/bad.png',
+          ALT: 'forbidden protocol',
+        },
+        children: [],
+      },
+      { type: 'text', value: 'before' },
+      'raw-node',
+    ],
+  })
+
+  expect(tree.children).toHaveLength(4)
+  expect(tree.children[0]).toMatchObject({
+    type: 'element',
+    tagName: 'A',
+    properties: {
+      href: 'https://example.com/path',
+      target: '_blank',
+      rel: 'noreferrer noopener',
+    },
+  })
+  expect(tree.children[1]).toMatchObject({
+    type: 'element',
+    tagName: 'img',
+    properties: {
+      alt: 'forbidden protocol',
+    },
+  })
+  expect(tree.children[2]).toMatchObject({ type: 'text', value: 'before' })
+  expect(tree.children[3]).toEqual('raw-node')
+})
