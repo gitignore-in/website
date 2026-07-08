@@ -398,8 +398,8 @@ test('normalizes tag casing and url safety edge cases', () => {
     type: 'element',
     tagName: 'A',
     properties: {
-      href: 'https://example.com/path',
-      target: '_blank',
+      HREF: 'https://example.com/path',
+      TARGET: '_blank',
       rel: 'noreferrer noopener',
     },
   })
