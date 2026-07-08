@@ -407,8 +407,9 @@ test('normalizes tag casing and url safety edge cases', () => {
     type: 'element',
     tagName: 'img',
     properties: {
-      alt: 'forbidden protocol',
+      ALT: 'forbidden protocol',
     },
+    children: [],
   })
   expect(tree.children[2]).toMatchObject({ type: 'text', value: 'before' })
   expect(tree.children[3]).toEqual('raw-node')
