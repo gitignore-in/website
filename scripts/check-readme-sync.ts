@@ -6,7 +6,7 @@ type Fetcher = (
 ) => Promise<Response>
 type LocalReadmeReader = () => Promise<string>
 
-export const upstreamReadmeCommit = '42f443ce633cb454058569a584bd4c08c44d710f'
+export const upstreamReadmeCommit = '158b4af5f91f3d1ef78be74c76507327448eedff'
 export const sourceUrl = `https://raw.githubusercontent.com/gitignore-in/gitignore-in/${upstreamReadmeCommit}/README.md`
 
 const localReadmeUrl = new URL('../src/readme.md', import.meta.url)
