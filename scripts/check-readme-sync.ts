@@ -1,24 +1,102 @@
 import { readFile } from 'node:fs/promises'
 
-const sourceUrl =
-  'https://raw.githubusercontent.com/gitignore-in/gitignore-in/main/README.md'
+type Fetcher = (
+  input: RequestInfo | URL,
+  init?: RequestInit,
+) => Promise<Response>
+type LocalReadmeReader = () => Promise<string>
 
-const response = await fetch(sourceUrl, {
-  signal: AbortSignal.timeout(10_000),
-})
-if (!response.ok) {
-  throw new Error(
-    `Failed to fetch upstream README: ${response.status} ${response.statusText}`,
-  )
+export const upstreamReadmeCommit = '42f443ce633cb454058569a584bd4c08c44d710f'
+export const sourceUrl = `https://raw.githubusercontent.com/gitignore-in/gitignore-in/${upstreamReadmeCommit}/README.md`
+
+const localReadmeUrl = new URL('../src/readme.md', import.meta.url)
+
+const readResponseText = async (response: Response): Promise<string> => {
+  try {
+    return await response.text()
+  } catch (cause) {
+    throw new Error(
+      `Failed to read upstream README at ${upstreamReadmeCommit}: ${cause}`,
+      { cause },
+    )
+  }
 }
 
-const [upstreamReadme, localReadme] = await Promise.all([
-  response.text(),
-  readFile(new URL('../src/readme.md', import.meta.url), 'utf8'),
-])
+const assertFetchResponseOk = (response: Response) => {
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch upstream README at ${upstreamReadmeCommit}: ${response.status} ${response.statusText}`,
+    )
+  }
+}
 
-if (localReadme !== upstreamReadme) {
-  throw new Error(
-    'src/readme.md is out of sync with gitignore-in/gitignore-in README.md',
-  )
+const assertResponseBodyIsNotEmpty = (upstreamReadme: string) => {
+  if (upstreamReadme.length === 0) {
+    throw new Error(
+      `Failed to fetch upstream README at ${upstreamReadmeCommit}: response body was empty`,
+    )
+  }
+}
+
+const normalize = (text: string) => text.normalize('NFC').replace(/\r\n/g, '\n')
+
+const mapReadLocalReadmeError = (err: unknown) => {
+  if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+    throw new Error(
+      'src/readme.md not found; run `git checkout src/readme.md` to restore',
+      { cause: err },
+    )
+  }
+
+  throw err
+}
+
+export const fetchUpstreamReadme = async (
+  fetcher: Fetcher = fetch,
+): Promise<string> => {
+  try {
+    const response = await fetcher(sourceUrl, {
+      signal: AbortSignal.timeout(10_000),
+    })
+    assertFetchResponseOk(response)
+
+    const upstreamReadme = await readResponseText(response)
+    assertResponseBodyIsNotEmpty(upstreamReadme)
+    return upstreamReadme
+  } catch (cause) {
+    throw new Error(
+      `Failed to fetch upstream README at ${upstreamReadmeCommit}: ${cause}`,
+      { cause },
+    )
+  }
+}
+
+const readLocalReadmeWithContext = async (
+  readLocalReadme: LocalReadmeReader,
+) => {
+  try {
+    return await readLocalReadme()
+  } catch (err) {
+    return mapReadLocalReadmeError(err)
+  }
+}
+
+export const checkReadmeSync = async (
+  fetcher: Fetcher = fetch,
+  readLocalReadme: LocalReadmeReader = () => readFile(localReadmeUrl, 'utf8'),
+): Promise<void> => {
+  const [upstreamReadme, localReadme] = await Promise.all([
+    fetchUpstreamReadme(fetcher),
+    readLocalReadmeWithContext(readLocalReadme),
+  ])
+
+  if (normalize(localReadme) !== normalize(upstreamReadme)) {
+    throw new Error(
+      'src/readme.md is out of sync with gitignore-in/gitignore-in README.md',
+    )
+  }
+}
+
+if (import.meta.main) {
+  await checkReadmeSync()
 }
