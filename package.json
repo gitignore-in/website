@@ -6,11 +6,12 @@
     "dev": "vite dev --port 3000",
     "build": "vite build",
     "start": "vite preview --port 3000",
-    "lint": "biome check . && bun run check:readme",
+    "lint": "biome check . && bun run check:readme && bun run check:readme-html",
     "check:readme": "bun scripts/check-readme-sync.ts",
+    "check:readme-html": "bun scripts/check-readme-html-elements.ts",
     "test": "bun run test:unit && cypress run",
     "test:unit": "bun test scripts/check-readme-sync.test.ts",
-    "test:coverage": "bun run test:unit && cypress run",
+    "test:coverage": "bun run test:unit && CYPRESS_COVERAGE=true cypress run",
     "coverage:report": "nyc report --reporter=cobertura --report-dir coverage",
     "format": "biome check --write ."
   },
@@ -22,6 +23,7 @@
     "react-dom": "19.2.7",
     "react-markdown": "^10.1.0",
     "rehype-raw": "^7.0.0",
+    "rehype-sanitize": "^6.0.0",
     "remark-gfm": "^4.0.1",
     "typescript": "6.0.3",
     "vite": "^8.0.13"
