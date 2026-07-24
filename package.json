@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.8",
-    "@biomejs/biome": "^2.5.0",
+    "@biomejs/biome": "^2.5.5",
     "@cypress/code-coverage": "^4.0.3",
     "@vitejs/plugin-react-swc": "^4.3.2",
     "cypress": "^15.19.0",
