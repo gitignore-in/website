@@ -85,16 +85,16 @@ describe('App Home', () => {
         tagName: 'p',
       })
       expect(
-        (sanitizedTree.children?.[0] as SanitizedTree).children,
+        (sanitizedTree.children?.[0] as SanitizedTree)?.children,
       ).to.have.length(2)
       expect(
-        ((sanitizedTree.children?.[0] as SanitizedTree).children ?? [])[0],
+        ((sanitizedTree.children?.[0] as SanitizedTree)?.children ?? [])[0],
       ).to.deep.include({
         type: 'text',
         value: 'before',
       })
       expect(
-        ((sanitizedTree.children?.[0] as SanitizedTree).children ?? [])[1],
+        ((sanitizedTree.children?.[0] as SanitizedTree)?.children ?? [])[1],
       ).to.deep.include({
         type: 'text',
         value: 'after',
@@ -163,7 +163,7 @@ describe('App Home', () => {
         },
       })
       expect(
-        (sanitizedTree.children?.[1] as SanitizedTree).properties,
+        (sanitizedTree.children?.[1] as SanitizedTree)?.properties,
       ).not.to.have.property('rel')
       expect(sanitizedTree.children?.[2]).to.deep.include({
         type: 'element',
