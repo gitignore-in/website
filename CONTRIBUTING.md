@@ -10,10 +10,11 @@ bun run dev    # http://localhost:3000
 ## Before submitting a PR
 
 ```sh
-bun run lint   # Biome check + readme sync check
-bun run format # auto-format with Biome
-bun run test   # run Cypress E2E tests
-bun run build  # verify the production build
+bun run lint          # Biome check + local README HTML element check
+bun run check:readme  # verify src/readme.md matches upstream (needs network)
+bun run format        # auto-format with Biome
+bun run test          # run Cypress E2E tests
+bun run build         # verify the production build
 ```
 
 ## Scope
