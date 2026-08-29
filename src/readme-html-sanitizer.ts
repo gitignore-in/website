@@ -1,3 +1,9 @@
+import {
+  upstreamReadmeCommit,
+  upstreamRepoName,
+  upstreamRepoOwner,
+} from './upstream-readme-source'
+
 type HNode = {
   type?: string
   tagName?: string
@@ -109,12 +115,7 @@ function isSafeUrl(value: string) {
     return false
   }
 
-  if (
-    trimmed.startsWith('/') ||
-    trimmed.startsWith('./') ||
-    trimmed.startsWith('../') ||
-    trimmed.startsWith('#')
-  ) {
+  if (trimmed.startsWith('/') || trimmed.startsWith('#')) {
     return true
   }
 
@@ -126,13 +127,43 @@ function isSafeUrl(value: string) {
   }
 }
 
+// The upstream README (`src/readme.md`) is byte-for-byte synced from
+// gitignore-in/gitignore-in (see scripts/check-readme-sync.ts) and links to
+// its own repo files with paths like `./LICENSE`. This site has no such
+// files, so those links must resolve against the upstream repo instead of
+// being rendered as-is, which would 404 on this site.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: tag-aware base URL selection keeps the branch explicit.
+function resolveRepoRelativeUrl(tagName: string, trimmed: string) {
+  if (!trimmed.startsWith('./') && !trimmed.startsWith('../')) {
+    return undefined
+  }
+
+  const base =
+    tagName === 'img'
+      ? `https://raw.githubusercontent.com/${upstreamRepoOwner}/${upstreamRepoName}/${upstreamReadmeCommit}/`
+      : `https://github.com/${upstreamRepoOwner}/${upstreamRepoName}/blob/${upstreamReadmeCommit}/`
+
+  try {
+    return new URL(trimmed, base).href
+  } catch {
+    return undefined
+  }
+}
+
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: tiny guard around URL filtering.
-function sanitizeUrlProperty(value: unknown) {
+function sanitizeUrlProperty(tagName: string, value: unknown) {
   if (typeof value !== 'string') {
     return undefined
   }
 
-  return isSafeUrl(value) ? value.trim() : undefined
+  const trimmed = value.trim()
+  const rewritten = resolveRepoRelativeUrl(tagName, trimmed)
+
+  if (rewritten !== undefined) {
+    return rewritten
+  }
+
+  return isSafeUrl(trimmed) ? trimmed : undefined
 }
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: attribute allowlist and URL guards are intentionally explicit.
@@ -162,7 +193,7 @@ function sanitizeProperties(
     }
 
     if (normalizedKey === 'href' || normalizedKey === 'src') {
-      const sanitizedUrl = sanitizeUrlProperty(value)
+      const sanitizedUrl = sanitizeUrlProperty(tagName, value)
 
       if (sanitizedUrl === undefined) {
         continue
