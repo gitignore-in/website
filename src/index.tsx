@@ -22,19 +22,25 @@ export default function Home() {
   )
 }
 
-// biome-ignore lint/style/noNonNullAssertion: root must be present in the document
-const mountTo = document.getElementById('root')!
+const mountTo = document.getElementById('root')
 
-if (window.navigator.userAgent.includes('Cypress')) {
-  Object.assign(window, {
-    __readmeSanitizerTestHooks: {
-      sanitizeReadmeHtmlTree,
-    },
-  })
+if (mountTo === null) {
+  const message =
+    'gitignore.in failed to start: #root mount element is missing from the document.'
+  console.error(message)
+  document.body.textContent = message
+} else {
+  if (window.navigator.userAgent.includes('Cypress')) {
+    Object.assign(window, {
+      __readmeSanitizerTestHooks: {
+        sanitizeReadmeHtmlTree,
+      },
+    })
+  }
+
+  ReactDOM.createRoot(mountTo).render(
+    <React.StrictMode>
+      <Home />
+    </React.StrictMode>,
+  )
 }
-
-ReactDOM.createRoot(mountTo).render(
-  <React.StrictMode>
-    <Home />
-  </React.StrictMode>,
-)
