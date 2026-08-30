@@ -22,8 +22,13 @@ export default function Home() {
   )
 }
 
-// biome-ignore lint/style/noNonNullAssertion: root must be present in the document
-const mountTo = document.getElementById('root')!
+const mountTo = document.getElementById('root')
+
+if (!mountTo) {
+  throw new Error(
+    "Failed to mount the app: no element with id 'root' was found in the document.",
+  )
+}
 
 if (window.navigator.userAgent.includes('Cypress')) {
   Object.assign(window, {
