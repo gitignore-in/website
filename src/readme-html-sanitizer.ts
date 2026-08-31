@@ -1,3 +1,9 @@
+import {
+  upstreamReadmeCommit,
+  upstreamRepoName,
+  upstreamRepoOwner,
+} from './upstream-readme-source'
+
 type HNode = {
   type?: string
   tagName?: string
@@ -109,12 +115,7 @@ function isSafeUrl(value: string) {
     return false
   }
 
-  if (
-    trimmed.startsWith('/') ||
-    trimmed.startsWith('./') ||
-    trimmed.startsWith('../') ||
-    trimmed.startsWith('#')
-  ) {
+  if (trimmed.startsWith('/') || trimmed.startsWith('#')) {
     return true
   }
 
@@ -126,13 +127,76 @@ function isSafeUrl(value: string) {
   }
 }
 
+// The upstream README (`src/readme.md`) is byte-for-byte synced from
+// gitignore-in/gitignore-in (see scripts/check-readme-sync.ts) and lives at
+// that repo's root, so a `./`- or `../`-prefixed link/image in it points at
+// a file in that repo, not on this site. Resolve the path against the repo
+// root ourselves (rather than via `new URL(relative, base)`) because that
+// treats the pinned commit segment in the base URL as a path segment that
+// `../` can pop off, silently producing a ref-less, broken GitHub URL.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: manual path-segment resolution is intentionally explicit.
+function resolveRepoRootRelativePath(relative: string): string | undefined {
+  const segments: string[] = []
+
+  for (const segment of relative.split('/')) {
+    if (segment === '' || segment === '.') {
+      continue
+    }
+
+    if (segment === '..') {
+      // README.md sits at the repo root, so any `..` here would climb
+      // above the repo — there is nothing valid to link to.
+      if (segments.length === 0) {
+        return undefined
+      }
+      segments.pop()
+      continue
+    }
+
+    segments.push(segment)
+  }
+
+  return segments.join('/')
+}
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: tag-aware base URL selection keeps the branch explicit.
+function resolveRepoRelativeUrl(tagName: string, trimmed: string) {
+  if (!trimmed.startsWith('./') && !trimmed.startsWith('../')) {
+    return undefined
+  }
+
+  const [path, hash = ''] = trimmed.split('#')
+  const resolvedPath = resolveRepoRootRelativePath(path)
+
+  if (resolvedPath === undefined) {
+    return undefined
+  }
+
+  const suffix = hash ? `${resolvedPath}#${hash}` : resolvedPath
+
+  return tagName === 'img'
+    ? `https://raw.githubusercontent.com/${upstreamRepoOwner}/${upstreamRepoName}/${upstreamReadmeCommit}/${suffix}`
+    : `https://github.com/${upstreamRepoOwner}/${upstreamRepoName}/blob/${upstreamReadmeCommit}/${suffix}`
+}
+
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: tiny guard around URL filtering.
-function sanitizeUrlProperty(value: unknown) {
+function sanitizeUrlProperty(tagName: string, value: unknown) {
   if (typeof value !== 'string') {
     return undefined
   }
 
-  return isSafeUrl(value) ? value.trim() : undefined
+  const trimmed = value.trim()
+  const rewritten = resolveRepoRelativeUrl(tagName, trimmed)
+
+  if (rewritten !== undefined) {
+    return rewritten
+  }
+
+  if (trimmed.startsWith('./') || trimmed.startsWith('../')) {
+    return undefined
+  }
+
+  return isSafeUrl(trimmed) ? trimmed : undefined
 }
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: attribute allowlist and URL guards are intentionally explicit.
@@ -162,7 +226,7 @@ function sanitizeProperties(
     }
 
     if (normalizedKey === 'href' || normalizedKey === 'src') {
-      const sanitizedUrl = sanitizeUrlProperty(value)
+      const sanitizedUrl = sanitizeUrlProperty(tagName, value)
 
       if (sanitizedUrl === undefined) {
         continue
