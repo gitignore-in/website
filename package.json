@@ -33,7 +33,7 @@
     "@biomejs/biome": "^2.5.11",
     "@cypress/code-coverage": "^4.0.3",
     "@vitejs/plugin-react-swc": "^4.3.3",
-    "cypress": "^15.21.1",
+    "cypress": "^16.0.0",
     "esbuild": "^0.28.2",
     "nyc": "^18.0.0",
     "vite-plugin-istanbul": "^9.0.1"
