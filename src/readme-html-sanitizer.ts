@@ -1,3 +1,9 @@
+import {
+  upstreamReadmeCommit,
+  upstreamRepoName,
+  upstreamRepoOwner,
+} from './upstream-readme-source'
+
 type HNode = {
   type?: string
   tagName?: string
@@ -109,12 +115,7 @@ function isSafeUrl(value: string) {
     return false
   }
 
-  if (
-    trimmed.startsWith('/') ||
-    trimmed.startsWith('./') ||
-    trimmed.startsWith('../') ||
-    trimmed.startsWith('#')
-  ) {
+  if (trimmed.startsWith('/') || trimmed.startsWith('#')) {
     return true
   }
 
@@ -126,13 +127,70 @@ function isSafeUrl(value: string) {
   }
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: tiny guard around URL filtering.
-function sanitizeUrlProperty(value: unknown) {
+// The synced README lives at the upstream repo root, so `./` and `../` paths
+// refer to upstream repository files rather than this site's deployed paths.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: manual path resolution is clearer than encoding this into nested helpers.
+function resolveRepoRootRelativePath(relative: string): string | undefined {
+  const segments: string[] = []
+
+  for (const segment of relative.split('/')) {
+    if (segment === '' || segment === '.') {
+      continue
+    }
+
+    if (segment === '..') {
+      if (segments.length === 0) {
+        return undefined
+      }
+      segments.pop()
+      continue
+    }
+
+    segments.push(segment)
+  }
+
+  return segments.join('/')
+}
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: the branch keeps tag-specific URL rewriting explicit.
+function resolveRepoRelativeUrl(tagName: string, trimmed: string) {
+  if (!trimmed.startsWith('./') && !trimmed.startsWith('../')) {
+    return undefined
+  }
+
+  const [path, ...hashParts] = trimmed.split('#')
+  const resolvedPath = resolveRepoRootRelativePath(path)
+
+  if (resolvedPath === undefined) {
+    return undefined
+  }
+
+  const hash = hashParts.join('#')
+  const suffix = hash ? `${resolvedPath}#${hash}` : resolvedPath
+
+  return tagName === 'img'
+    ? `https://raw.githubusercontent.com/${upstreamRepoOwner}/${upstreamRepoName}/${upstreamReadmeCommit}/${suffix}`
+    : `https://github.com/${upstreamRepoOwner}/${upstreamRepoName}/blob/${upstreamReadmeCommit}/${suffix}`
+}
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: URL rewriting needs a small explicit decision tree.
+function sanitizeUrlProperty(tagName: string, value: unknown) {
   if (typeof value !== 'string') {
     return undefined
   }
 
-  return isSafeUrl(value) ? value.trim() : undefined
+  const trimmed = value.trim()
+  const rewritten = resolveRepoRelativeUrl(tagName, trimmed)
+
+  if (rewritten !== undefined) {
+    return rewritten
+  }
+
+  if (trimmed.startsWith('./') || trimmed.startsWith('../')) {
+    return undefined
+  }
+
+  return isSafeUrl(trimmed) ? trimmed : undefined
 }
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: attribute allowlist and URL guards are intentionally explicit.
@@ -162,7 +220,7 @@ function sanitizeProperties(
     }
 
     if (normalizedKey === 'href' || normalizedKey === 'src') {
-      const sanitizedUrl = sanitizeUrlProperty(value)
+      const sanitizedUrl = sanitizeUrlProperty(tagName, value)
 
       if (sanitizedUrl === undefined) {
         continue

@@ -1,4 +1,8 @@
 import { readFile } from 'node:fs/promises'
+import {
+  upstreamReadmeCommit,
+  upstreamReadmeSourceUrl,
+} from '../src/upstream-readme-source'
 
 type Fetcher = (
   input: RequestInfo | URL,
@@ -6,8 +10,8 @@ type Fetcher = (
 ) => Promise<Response>
 type LocalReadmeReader = () => Promise<string>
 
-export const upstreamReadmeCommit = '158b4af5f91f3d1ef78be74c76507327448eedff'
-export const sourceUrl = `https://raw.githubusercontent.com/gitignore-in/gitignore-in/${upstreamReadmeCommit}/README.md`
+export const sourceUrl = upstreamReadmeSourceUrl
+export { upstreamReadmeCommit }
 
 const localReadmeUrl = new URL('../src/readme.md', import.meta.url)
 
