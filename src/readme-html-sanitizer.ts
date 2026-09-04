@@ -165,13 +165,14 @@ function resolveRepoRelativeUrl(tagName: string, trimmed: string) {
     return undefined
   }
 
-  const [path, hash = ''] = trimmed.split('#')
+  const [path, ...hashParts] = trimmed.split('#')
   const resolvedPath = resolveRepoRootRelativePath(path)
 
   if (resolvedPath === undefined) {
     return undefined
   }
 
+  const hash = hashParts.join('#')
   const suffix = hash ? `${resolvedPath}#${hash}` : resolvedPath
 
   return tagName === 'img'

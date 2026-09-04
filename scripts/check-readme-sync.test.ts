@@ -269,6 +269,105 @@ test('keeps safe urls and adds rel on target blank links', () => {
   })
 })
 
+test('rewrites repo-relative README links to the upstream repo', () => {
+  const tree = sanitizeReadmeHtmlTree({
+    type: 'root',
+    children: [
+      {
+        type: 'element',
+        tagName: 'a',
+        properties: {
+          href: './LICENSE',
+        },
+        children: [{ type: 'text', value: 'license' }],
+      },
+      {
+        type: 'element',
+        tagName: 'a',
+        properties: {
+          href: './docs/usage.md#install',
+        },
+        children: [{ type: 'text', value: 'usage' }],
+      },
+      {
+        type: 'element',
+        tagName: 'img',
+        properties: {
+          src: './assets/concept.png',
+          alt: 'concept',
+        },
+        children: [],
+      },
+      {
+        type: 'element',
+        tagName: 'a',
+        properties: {
+          href: '/pages/subpage',
+        },
+        children: [{ type: 'text', value: 'site page' }],
+      },
+    ],
+  })
+
+  expect(tree.children).toHaveLength(4)
+  expect(tree.children[0]).toMatchObject({
+    type: 'element',
+    tagName: 'a',
+    properties: {
+      href: `https://github.com/gitignore-in/gitignore-in/blob/${upstreamReadmeCommit}/LICENSE`,
+    },
+  })
+  expect(tree.children[1]).toMatchObject({
+    type: 'element',
+    tagName: 'a',
+    properties: {
+      href: `https://github.com/gitignore-in/gitignore-in/blob/${upstreamReadmeCommit}/docs/usage.md#install`,
+    },
+  })
+  expect(tree.children[2]).toMatchObject({
+    type: 'element',
+    tagName: 'img',
+    properties: {
+      alt: 'concept',
+      src: `https://raw.githubusercontent.com/gitignore-in/gitignore-in/${upstreamReadmeCommit}/assets/concept.png`,
+    },
+  })
+  expect(tree.children[3]).toMatchObject({
+    type: 'element',
+    tagName: 'a',
+    properties: {
+      href: '/pages/subpage',
+    },
+  })
+})
+
+test('drops repo-relative URLs that escape above the upstream repo root', () => {
+  const tree = sanitizeReadmeHtmlTree({
+    type: 'root',
+    children: [
+      {
+        type: 'element',
+        tagName: 'a',
+        properties: {
+          href: '../CHANGELOG.md',
+          title: 'outside root',
+        },
+        children: [{ type: 'text', value: 'changelog' }],
+      },
+    ],
+  })
+
+  expect(tree.children).toHaveLength(1)
+  expect(tree.children[0]).toMatchObject({
+    type: 'element',
+    tagName: 'a',
+    properties: {
+      title: 'outside root',
+    },
+  })
+  expect(tree.children[0].properties).not.toHaveProperty('href')
+})
+
 test('rejects malformed image urls containing spaces', () => {
   const tree = sanitizeReadmeHtmlTree({
     type: 'root',
