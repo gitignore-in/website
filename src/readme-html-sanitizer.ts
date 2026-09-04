@@ -127,9 +127,14 @@ function isSafeUrl(value: string) {
   }
 }
 
-// The synced README lives at the upstream repo root, so `./` and `../` paths
-// refer to upstream repository files rather than this site's deployed paths.
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: manual path resolution is clearer than encoding this into nested helpers.
+// The upstream README (`src/readme.md`) is byte-for-byte synced from
+// gitignore-in/gitignore-in (see scripts/check-readme-sync.ts) and lives at
+// that repo's root, so a `./`- or `../`-prefixed link/image in it points at
+// a file in that repo, not on this site. Resolve the path against the repo
+// root ourselves (rather than via `new URL(relative, base)`) because that
+// treats the pinned commit segment in the base URL as a path segment that
+// `../` can pop off, silently producing a ref-less, broken GitHub URL.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: manual path-segment resolution is intentionally explicit.
 function resolveRepoRootRelativePath(relative: string): string | undefined {
   const segments: string[] = []
 
@@ -139,6 +144,8 @@ function resolveRepoRootRelativePath(relative: string): string | undefined {
     }
 
     if (segment === '..') {
+      // README.md sits at the repo root, so any `..` here would climb
+      // above the repo — there is nothing valid to link to.
       if (segments.length === 0) {
         return undefined
       }
@@ -152,7 +159,7 @@ function resolveRepoRootRelativePath(relative: string): string | undefined {
   return segments.join('/')
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: the branch keeps tag-specific URL rewriting explicit.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: tag-aware base URL selection keeps the branch explicit.
 function resolveRepoRelativeUrl(tagName: string, trimmed: string) {
   if (!trimmed.startsWith('./') && !trimmed.startsWith('../')) {
     return undefined
@@ -173,7 +180,7 @@ function resolveRepoRelativeUrl(tagName: string, trimmed: string) {
     : `https://github.com/${upstreamRepoOwner}/${upstreamRepoName}/blob/${upstreamReadmeCommit}/${suffix}`
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: URL rewriting needs a small explicit decision tree.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: tiny guard around URL filtering.
 function sanitizeUrlProperty(tagName: string, value: unknown) {
   if (typeof value !== 'string') {
     return undefined

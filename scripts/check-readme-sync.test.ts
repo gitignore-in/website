@@ -2,6 +2,11 @@ import { expect, test } from 'bun:test'
 
 import { sanitizeReadmeHtmlTree } from '../src/readme-html-sanitizer'
 import {
+  upstreamReadmeCommit as upstreamRepoCommit,
+  upstreamRepoName,
+  upstreamRepoOwner,
+} from '../src/upstream-readme-source'
+import {
   checkReadmeSync,
   sourceUrl,
   upstreamReadmeCommit,
@@ -512,4 +517,83 @@ test('normalizes tag casing and url safety edge cases', () => {
   })
   expect(tree.children[2]).toMatchObject({ type: 'text', value: 'before' })
   expect(tree.children[3]).toEqual('raw-node')
+})
+
+test('rewrites repo-root-relative README links to the upstream GitHub repo', () => {
+  const tree = sanitizeReadmeHtmlTree({
+    type: 'root',
+    children: [
+      {
+        type: 'element',
+        tagName: 'a',
+        properties: { href: './LICENSE' },
+        children: [{ type: 'text', value: 'LICENSE' }],
+      },
+      {
+        type: 'element',
+        tagName: 'a',
+        properties: { href: './sub/../file.md#section' },
+        children: [{ type: 'text', value: 'section' }],
+      },
+      {
+        type: 'element',
+        tagName: 'img',
+        properties: { src: './concept.png', alt: 'concept' },
+        children: [],
+      },
+      {
+        type: 'element',
+        tagName: 'a',
+        properties: { href: '/pages/subpage' },
+        children: [{ type: 'text', value: 'site page' }],
+      },
+      {
+        type: 'element',
+        tagName: 'a',
+        properties: { href: '../escapes-repo-root.md' },
+        children: [{ type: 'text', value: 'escapes' }],
+      },
+    ],
+  })
+
+  expect(tree.children[0]).toMatchObject({
+    type: 'element',
+    tagName: 'a',
+    properties: {
+      href: `https://github.com/${upstreamRepoOwner}/${upstreamRepoName}/blob/${upstreamRepoCommit}/LICENSE`,
+    },
+  })
+  // A `../` that stays within the repo (backing out of a directory the
+  // link itself descended into) still resolves against the pinned commit —
+  // the commit segment is never dropped.
+  expect(tree.children[1]).toMatchObject({
+    type: 'element',
+    tagName: 'a',
+    properties: {
+      href: `https://github.com/${upstreamRepoOwner}/${upstreamRepoName}/blob/${upstreamRepoCommit}/file.md#section`,
+    },
+  })
+  expect(tree.children[2]).toMatchObject({
+    type: 'element',
+    tagName: 'img',
+    properties: {
+      src: `https://raw.githubusercontent.com/${upstreamRepoOwner}/${upstreamRepoName}/${upstreamRepoCommit}/concept.png`,
+      alt: 'concept',
+    },
+  })
+  // Site-root-relative paths (e.g. links to this site itself) are left as-is.
+  expect(tree.children[3]).toMatchObject({
+    type: 'element',
+    tagName: 'a',
+    properties: { href: '/pages/subpage' },
+  })
+  // README.md lives at the upstream repo root, so a `..` that climbs above
+  // it has nothing valid to resolve to and must be dropped, not turned into
+  // a ref-less, broken GitHub URL.
+  expect(tree.children[4]).toMatchObject({
+    type: 'element',
+    tagName: 'a',
+    properties: {},
+  })
+  expect(tree.children[4].properties?.href).toBeUndefined()
 })
