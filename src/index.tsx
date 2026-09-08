@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom/client'
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
-import readmeMarkdown from './readme.md?raw'
 import {
   rehypeSanitizeReadme,
   sanitizeReadmeHtmlTree,
 } from './readme-html-sanitizer'
+import readmeMarkdown from './upstream/readme.md?raw'
 
 // rehype-raw preserves the upstream README's raw HTML, and the local
 // sanitizer removes executable or unsafe tags and attributes before render.
