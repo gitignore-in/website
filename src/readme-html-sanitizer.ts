@@ -127,7 +127,7 @@ function isSafeUrl(value: string) {
   }
 }
 
-// The upstream README (`src/readme.md`) is byte-for-byte synced from
+// The upstream README (`content/readme.md`) is byte-for-byte synced from
 // gitignore-in/gitignore-in (see scripts/check-readme-sync.ts) and lives at
 // that repo's root, so a `./`- or `../`-prefixed link/image in it points at
 // a file in that repo, not on this site. Resolve the path against the repo

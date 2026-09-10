@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises'
 // after confirming it is safe to render without sanitization.
 const ALLOWED_ELEMENTS = new Set(['img'])
 
-const readmePath = new URL('../src/readme.md', import.meta.url)
+const readmePath = new URL('../content/readme.md', import.meta.url)
 const content = await readFile(readmePath, 'utf8')
 
 // Remove fenced code blocks (``` ... ```) to avoid matching tags inside code.
@@ -33,7 +33,7 @@ for (const match of allMatches) {
 if (unexpected.length > 0) {
   const unique = [...new Set(unexpected)]
   console.error(
-    `check:readme-html: unexpected HTML element(s) in src/readme.md: ${unique.join(', ')}`,
+    `check:readme-html: unexpected HTML element(s) in content/readme.md: ${unique.join(', ')}`,
   )
   console.error(
     'Only the following elements are allowed: ' +

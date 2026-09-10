@@ -73,7 +73,7 @@ test('reports local README missing with restoration guidance', async () => {
       },
     ),
   ).rejects.toThrow(
-    'src/readme.md not found; run `git checkout src/readme.md` to restore',
+    'content/readme.md not found; run `git checkout content/readme.md` to restore',
   )
 })
 
