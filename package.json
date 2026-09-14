@@ -10,7 +10,7 @@
     "check:readme": "bun scripts/check-readme-sync.ts",
     "check:readme-html": "bun scripts/check-readme-html-elements.ts",
     "test": "bun run test:unit && cypress run",
-    "test:unit": "bun test scripts/check-readme-sync.test.ts",
+    "test:unit": "bun test scripts/check-readme-sync.test.ts src/readme-html-sanitizer.test.ts",
     "test:coverage": "bun run test:unit && CYPRESS_COVERAGE=true cypress run",
     "coverage:report": "nyc report --reporter=cobertura --report-dir coverage",
     "format": "biome check --write ."
