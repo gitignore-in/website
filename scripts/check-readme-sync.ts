@@ -13,7 +13,7 @@ type LocalReadmeReader = () => Promise<string>
 export const sourceUrl = upstreamReadmeSourceUrl
 export { upstreamReadmeCommit }
 
-const localReadmeUrl = new URL('../src/readme.md', import.meta.url)
+const localReadmeUrl = new URL('../content/readme.md', import.meta.url)
 
 const readResponseText = async (response: Response): Promise<string> => {
   try {
@@ -47,7 +47,7 @@ const normalize = (text: string) => text.normalize('NFC').replace(/\r\n/g, '\n')
 const mapReadLocalReadmeError = (err: unknown) => {
   if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
     throw new Error(
-      'src/readme.md not found; run `git checkout src/readme.md` to restore',
+      'content/readme.md not found; run `git checkout content/readme.md` to restore',
       { cause: err },
     )
   }
@@ -96,7 +96,7 @@ export const checkReadmeSync = async (
 
   if (normalize(localReadme) !== normalize(upstreamReadme)) {
     throw new Error(
-      'src/readme.md is out of sync with gitignore-in/gitignore-in README.md',
+      'content/readme.md is out of sync with gitignore-in/gitignore-in README.md',
     )
   }
 }

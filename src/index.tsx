@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
-import readmeMarkdown from './readme.md?raw'
+import readmeMarkdown from '../content/readme.md?raw'
 import {
   rehypeSanitizeReadme,
   sanitizeReadmeHtmlTree,
