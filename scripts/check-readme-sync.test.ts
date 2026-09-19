@@ -79,6 +79,23 @@ test('reports local README missing with restoration guidance', async () => {
   )
 })
 
+test('reports local README read failures with local-file context', async () => {
+  const error = await checkReadmeSync(
+    async () => new Response('readme'),
+    async () => {
+      const error = new Error('permission denied')
+      ;(error as NodeJS.ErrnoException).code = 'EACCES'
+      throw error
+    },
+  ).catch((error: unknown) => error)
+
+  expect(error).toBeInstanceOf(Error)
+  expect((error as Error).message).toBe(
+    'Failed to read local content/readme.md: Error: permission denied',
+  )
+  expect((error as Error).cause).toMatchObject({ code: 'EACCES' })
+})
+
 test('reports fetch timeouts with upstream context', async () => {
   await expect(
     checkReadmeSync(
