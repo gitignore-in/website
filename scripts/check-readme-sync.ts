@@ -52,7 +52,9 @@ const mapReadLocalReadmeError = (err: unknown) => {
     )
   }
 
-  throw err
+  throw new Error(`Failed to read local content/readme.md: ${err}`, {
+    cause: err,
+  })
 }
 
 export const fetchUpstreamReadme = async (
