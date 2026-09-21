@@ -52,27 +52,31 @@ const mapReadLocalReadmeError = (err: unknown) => {
     )
   }
 
-  throw err
+  throw new Error(`Failed to read local content/readme.md: ${err}`, {
+    cause: err,
+  })
 }
 
 export const fetchUpstreamReadme = async (
   fetcher: Fetcher = fetch,
 ): Promise<string> => {
+  let response: Response
   try {
-    const response = await fetcher(sourceUrl, {
+    response = await fetcher(sourceUrl, {
       signal: AbortSignal.timeout(10_000),
     })
-    assertFetchResponseOk(response)
-
-    const upstreamReadme = await readResponseText(response)
-    assertResponseBodyIsNotEmpty(upstreamReadme)
-    return upstreamReadme
   } catch (cause) {
     throw new Error(
       `Failed to fetch upstream README at ${upstreamReadmeCommit}: ${cause}`,
       { cause },
     )
   }
+
+  assertFetchResponseOk(response)
+
+  const upstreamReadme = await readResponseText(response)
+  assertResponseBodyIsNotEmpty(upstreamReadme)
+  return upstreamReadme
 }
 
 const readLocalReadmeWithContext = async (

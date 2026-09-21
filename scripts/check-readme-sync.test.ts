@@ -36,12 +36,13 @@ test('reports the pinned upstream commit when fetch rejects', async () => {
 })
 
 test('reports an empty upstream body as a fetch failure', async () => {
-  await expect(
-    checkReadmeSync(
-      async () => new Response(''),
-      async () => 'readme',
-    ),
-  ).rejects.toThrow(
+  const error = await checkReadmeSync(
+    async () => new Response(''),
+    async () => 'readme',
+  ).catch((error: unknown) => error)
+
+  expect(error).toBeInstanceOf(Error)
+  expect((error as Error).message).toBe(
     `Failed to fetch upstream README at ${upstreamReadmeCommit}: response body was empty`,
   )
 })
@@ -52,12 +53,13 @@ test('reports upstream body read failures before comparing content', async () =>
     throw new Error('stream interrupted')
   }
 
-  await expect(
-    checkReadmeSync(
-      async () => response,
-      async () => 'readme',
-    ),
-  ).rejects.toThrow(
+  const error = await checkReadmeSync(
+    async () => response,
+    async () => 'readme',
+  ).catch((error: unknown) => error)
+
+  expect(error).toBeInstanceOf(Error)
+  expect((error as Error).message).toBe(
     `Failed to read upstream README at ${upstreamReadmeCommit}: Error: stream interrupted`,
   )
 })
@@ -75,6 +77,23 @@ test('reports local README missing with restoration guidance', async () => {
   ).rejects.toThrow(
     'content/readme.md not found; run `git checkout content/readme.md` to restore',
   )
+})
+
+test('reports local README read failures with local-file context', async () => {
+  const error = await checkReadmeSync(
+    async () => new Response('readme'),
+    async () => {
+      const error = new Error('permission denied')
+      ;(error as NodeJS.ErrnoException).code = 'EACCES'
+      throw error
+    },
+  ).catch((error: unknown) => error)
+
+  expect(error).toBeInstanceOf(Error)
+  expect((error as Error).message).toBe(
+    'Failed to read local content/readme.md: Error: permission denied',
+  )
+  expect((error as Error).cause).toMatchObject({ code: 'EACCES' })
 })
 
 test('reports fetch timeouts with upstream context', async () => {
