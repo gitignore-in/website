@@ -30,6 +30,11 @@ describe('App Home', () => {
   })
 
   it('should show a fallback and log a render error through the error boundary', () => {
+    // React re-surfaces errors caught by an error boundary as a browser-level
+    // `error` event, which trips Cypress's own uncaught-exception detector on
+    // the same window; without this override it fails the test before the
+    // assertions below run.
+    cy.on('uncaught:exception', () => false)
     cy.visit('/')
     cy.window().then((win) => {
       cy.stub(win.console, 'error').as('consoleError')
