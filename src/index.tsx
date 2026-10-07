@@ -27,6 +27,7 @@ export default function Home() {
 // Lets the Cypress suite exercise the ErrorBoundary without a
 // production-only code path: the throw only fires if a test explicitly
 // flips this flag through the Cypress-only test hook below.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: the throw guard is the Cypress-only test hook itself.
 function RenderErrorTrigger() {
   const [shouldThrow, setShouldThrow] = React.useState(false)
 

@@ -23,6 +23,7 @@ export class ErrorBoundary extends React.Component<
     reportClientError('render-error', error)
   }
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: fallback vs. children is the smallest possible branch.
   render() {
     if (this.state.hasError) {
       return (
