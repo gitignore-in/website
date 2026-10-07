@@ -29,6 +29,53 @@ describe('App Home', () => {
     cy.contains('h2', 'Solution')
   })
 
+  it('should show a fallback and log a render error through the error boundary', () => {
+    cy.visit('/')
+    cy.window().then((win) => {
+      cy.stub(win.console, 'error').as('consoleError')
+      ;(
+        win as Window & {
+          __errorBoundaryTestHooks: { triggerRenderError: () => void }
+        }
+      ).__errorBoundaryTestHooks.triggerRenderError()
+    })
+    cy.contains('[role="alert"]', /something went wrong/i)
+    cy.get('@consoleError').should(
+      'have.been.calledWithMatch',
+      /client-error:render-error/,
+    )
+  })
+
+  it('should log uncaught window errors and unhandled promise rejections', () => {
+    cy.visit('/')
+    cy.window().then((win) => {
+      cy.stub(win.console, 'error').as('consoleError')
+      win.dispatchEvent(
+        new win.ErrorEvent('error', {
+          message: 'boom',
+          error: new Error('boom'),
+        }),
+      )
+    })
+    cy.get('@consoleError').should(
+      'have.been.calledWithMatch',
+      /client-error:window-error/,
+    )
+
+    cy.window().then((win) => {
+      win.dispatchEvent(
+        new win.PromiseRejectionEvent('unhandledrejection', {
+          promise: Promise.reject(new Error('rejected')),
+          reason: new Error('rejected'),
+        }),
+      )
+    })
+    cy.get('@consoleError').should(
+      'have.been.calledWithMatch',
+      /client-error:unhandled-rejection/,
+    )
+  })
+
   it('should serve the SVG favicon', () => {
     cy.request('/favicon.svg').its('status').should('eq', 200)
     cy.visit('/')
