@@ -47,6 +47,10 @@ describe('App Home', () => {
   })
 
   it('should log uncaught window errors and unhandled promise rejections', () => {
+    // Dispatching synthetic `error`/`unhandledrejection` events also trips
+    // Cypress's own uncaught-exception detector on the same window; without
+    // this it fails the test before the assertions below run.
+    cy.on('uncaught:exception', () => false)
     cy.visit('/')
     cy.window().then((win) => {
       cy.stub(win.console, 'error').as('consoleError')
