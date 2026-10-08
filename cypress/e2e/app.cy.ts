@@ -38,12 +38,23 @@ describe('App Home', () => {
     cy.visit('/')
     cy.window().then((win) => {
       cy.stub(win.console, 'error').as('consoleError')
-      ;(
-        win as Window & {
-          __errorBoundaryTestHooks: { triggerRenderError: () => void }
-        }
-      ).__errorBoundaryTestHooks.triggerRenderError()
     })
+    // The test hook is attached from a `useEffect`, which commits after
+    // `cy.window()` already resolves with the window reference; retry until
+    // the hook is actually attached instead of racing it.
+    cy.window({ timeout: 10000 })
+      .should(
+        (win) =>
+          (win as Window & { __errorBoundaryTestHooks?: unknown })
+            .__errorBoundaryTestHooks !== undefined,
+      )
+      .then((win) => {
+        ;(
+          win as Window & {
+            __errorBoundaryTestHooks: { triggerRenderError: () => void }
+          }
+        ).__errorBoundaryTestHooks.triggerRenderError()
+      })
     cy.contains('[role="alert"]', /something went wrong/i)
     cy.get('@consoleError').should(
       'have.been.calledWithMatch',
