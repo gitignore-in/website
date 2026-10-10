@@ -43,11 +43,12 @@ describe('App Home', () => {
     // `cy.window()` already resolves with the window reference; retry until
     // the hook is actually attached instead of racing it.
     cy.window({ timeout: 10000 })
-      .should(
-        (win) =>
+      .should((win) => {
+        expect(
           (win as Window & { __errorBoundaryTestHooks?: unknown })
-            .__errorBoundaryTestHooks !== undefined,
-      )
+            .__errorBoundaryTestHooks,
+        ).not.to.equal(undefined)
+      })
       .then((win) => {
         ;(
           win as Window & {
