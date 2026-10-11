@@ -1,4 +1,8 @@
 import { readFile } from 'node:fs/promises'
+import {
+  upstreamReadmeCommit,
+  upstreamReadmeSourceUrl,
+} from '../src/upstream-readme-source'
 
 type Fetcher = (
   input: RequestInfo | URL,
@@ -6,10 +10,10 @@ type Fetcher = (
 ) => Promise<Response>
 type LocalReadmeReader = () => Promise<string>
 
-export const upstreamReadmeCommit = '158b4af5f91f3d1ef78be74c76507327448eedff'
-export const sourceUrl = `https://raw.githubusercontent.com/gitignore-in/gitignore-in/${upstreamReadmeCommit}/README.md`
+export const sourceUrl = upstreamReadmeSourceUrl
+export { upstreamReadmeCommit }
 
-const localReadmeUrl = new URL('../src/readme.md', import.meta.url)
+const localReadmeUrl = new URL('../src/upstream/readme.md', import.meta.url)
 
 const readResponseText = async (response: Response): Promise<string> => {
   try {
@@ -43,7 +47,7 @@ const normalize = (text: string) => text.normalize('NFC').replace(/\r\n/g, '\n')
 const mapReadLocalReadmeError = (err: unknown) => {
   if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
     throw new Error(
-      'src/readme.md not found; run `git checkout src/readme.md` to restore',
+      'src/upstream/readme.md not found; run `git checkout src/upstream/readme.md` to restore',
       { cause: err },
     )
   }
@@ -92,7 +96,7 @@ export const checkReadmeSync = async (
 
   if (normalize(localReadme) !== normalize(upstreamReadme)) {
     throw new Error(
-      'src/readme.md is out of sync with gitignore-in/gitignore-in README.md',
+      'src/upstream/readme.md is out of sync with gitignore-in/gitignore-in README.md',
     )
   }
 }
