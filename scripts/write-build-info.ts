@@ -15,14 +15,17 @@ export type BuildEnv = Readonly<Record<string, string | undefined>>
 const outDir = fileURLToPath(new URL('../out', import.meta.url))
 export const buildInfoPath = `${outDir}/build-info.json`
 
+const fallbackUnknown = (value: string | undefined): string =>
+  value ?? 'unknown'
+
 export const buildInfoFromEnv = (
   env: BuildEnv,
   nowIso: string = new Date().toISOString(),
 ): BuildInfo => ({
-  commit: env.GITHUB_SHA ?? 'unknown',
-  runId: env.GITHUB_RUN_ID ?? 'unknown',
-  runNumber: env.GITHUB_RUN_NUMBER ?? 'unknown',
-  ref: env.GITHUB_REF_NAME ?? 'unknown',
+  commit: fallbackUnknown(env.GITHUB_SHA),
+  runId: fallbackUnknown(env.GITHUB_RUN_ID),
+  runNumber: fallbackUnknown(env.GITHUB_RUN_NUMBER),
+  ref: fallbackUnknown(env.GITHUB_REF_NAME),
   builtAt: nowIso,
 })
 
