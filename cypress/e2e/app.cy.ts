@@ -29,6 +29,74 @@ describe('App Home', () => {
     cy.contains('h2', 'Solution')
   })
 
+  it('should show a fallback and log a render error through the error boundary', () => {
+    // React re-surfaces errors caught by an error boundary as a browser-level
+    // `error` event, which trips Cypress's own uncaught-exception detector on
+    // the same window; without this override it fails the test before the
+    // assertions below run.
+    cy.on('uncaught:exception', () => false)
+    cy.visit('/')
+    cy.window().then((win) => {
+      cy.stub(win.console, 'error').as('consoleError')
+    })
+    // The test hook is attached from a `useEffect`, which commits after
+    // `cy.window()` already resolves with the window reference; retry until
+    // the hook is actually attached instead of racing it.
+    cy.window({ timeout: 10000 })
+      .should((win) => {
+        expect(
+          (win as Window & { __errorBoundaryTestHooks?: unknown })
+            .__errorBoundaryTestHooks,
+        ).not.to.equal(undefined)
+      })
+      .then((win) => {
+        ;(
+          win as Window & {
+            __errorBoundaryTestHooks: { triggerRenderError: () => void }
+          }
+        ).__errorBoundaryTestHooks.triggerRenderError()
+      })
+    cy.contains('[role="alert"]', /something went wrong/i)
+    cy.get('@consoleError').should(
+      'have.been.calledWithMatch',
+      /client-error:render-error/,
+    )
+  })
+
+  it('should log uncaught window errors and unhandled promise rejections', () => {
+    // Dispatching synthetic `error`/`unhandledrejection` events also trips
+    // Cypress's own uncaught-exception detector on the same window; without
+    // this it fails the test before the assertions below run.
+    cy.on('uncaught:exception', () => false)
+    cy.visit('/')
+    cy.window().then((win) => {
+      cy.stub(win.console, 'error').as('consoleError')
+      win.dispatchEvent(
+        new win.ErrorEvent('error', {
+          message: 'boom',
+          error: new Error('boom'),
+        }),
+      )
+    })
+    cy.get('@consoleError').should(
+      'have.been.calledWithMatch',
+      /client-error:window-error/,
+    )
+
+    cy.window().then((win) => {
+      win.dispatchEvent(
+        new win.PromiseRejectionEvent('unhandledrejection', {
+          promise: Promise.reject(new Error('rejected')),
+          reason: new Error('rejected'),
+        }),
+      )
+    })
+    cy.get('@consoleError').should(
+      'have.been.calledWithMatch',
+      /client-error:unhandled-rejection/,
+    )
+  })
+
   it('should serve the SVG favicon', () => {
     cy.request('/favicon.svg').its('status').should('eq', 200)
     cy.visit('/')
