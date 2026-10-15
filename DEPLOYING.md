@@ -14,6 +14,14 @@ This site uses continuous deployment via GitHub Actions:
 
 ## Tracking what is deployed
 
+- **Live build record**: every build writes `build-info.json` (source commit
+  SHA, workflow run ID/number, ref, and build timestamp) into the build
+  output via `scripts/write-build-info.ts`, so it is published alongside the
+  site and served at [gitignore.in/build-info.json](https://gitignore.in/build-info.json).
+  This is the authoritative, machine-readable record of which source commit
+  produced the content currently being served — fetch it directly instead of
+  manually cross-referencing Actions run history and the `gh-pages` commit
+  log.
 - **Latest deploy**: the most recent green run of the `Publish Website` workflow
 - **Deploy history**: [`gh-pages` branch commit log](https://github.com/gitignore-in/website/commits/gh-pages) — each deploy adds one commit
 - **Change history**: [`CHANGELOG.md`](./CHANGELOG.md) — notable changes are recorded there
