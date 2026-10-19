@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client'
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
+import { ErrorBoundary } from './error-boundary'
+import { reportClientError } from './error-reporting'
 import {
   rehypeSanitizeReadme,
   sanitizeReadmeHtmlTree,
@@ -22,6 +24,33 @@ export default function Home() {
   )
 }
 
+// Lets the Cypress suite exercise the ErrorBoundary without a
+// production-only code path: the throw only fires if a test explicitly
+// flips this flag through the Cypress-only test hook below.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: the throw guard is the Cypress-only test hook itself.
+function RenderErrorTrigger() {
+  const [shouldThrow, setShouldThrow] = React.useState(false)
+
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: early return keeps the Cypress-only hook isolated.
+  React.useEffect(() => {
+    if (!window.navigator.userAgent.includes('Cypress')) {
+      return
+    }
+
+    Object.assign(window, {
+      __errorBoundaryTestHooks: {
+        triggerRenderError: () => setShouldThrow(true),
+      },
+    })
+  }, [])
+
+  if (shouldThrow) {
+    throw new Error('cypress-triggered render error')
+  }
+
+  return null
+}
+
 const mountTo = document.getElementById('root')
 
 if (!mountTo) {
@@ -38,8 +67,19 @@ if (window.navigator.userAgent.includes('Cypress')) {
   })
 }
 
+window.addEventListener('error', (event) => {
+  reportClientError('window-error', event.error ?? event.message)
+})
+
+window.addEventListener('unhandledrejection', (event) => {
+  reportClientError('unhandled-rejection', event.reason)
+})
+
 ReactDOM.createRoot(mountTo).render(
   <React.StrictMode>
-    <Home />
+    <ErrorBoundary>
+      <RenderErrorTrigger />
+      <Home />
+    </ErrorBoundary>
   </React.StrictMode>,
 )
