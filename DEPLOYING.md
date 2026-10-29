@@ -32,6 +32,7 @@ To rollback to a previous deployment:
 
 1. Identify the target `gh-pages` commit SHA from the branch history
 2. On a local clone, revert the `gh-pages` branch:
+
    ```sh
    git checkout gh-pages
    git reset --hard <target-sha>

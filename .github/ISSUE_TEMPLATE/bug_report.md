@@ -1,4 +1,5 @@
 ---
+
 name: Bug report
 about: Report a problem with the gitignore.in website
 title: ""
