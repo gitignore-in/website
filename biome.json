@@ -51,5 +51,13 @@
       "!**/build",
       "!**/pnpm-lock.yaml"
     ]
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/upstream/readme.md"],
+      "formatter": {
+        "enabled": false
+      }
+    }
+  ]
 }
