@@ -91,7 +91,7 @@ test('finishes upstream body handling before a local README failure', async () =
   expect(localReadStarted).toBe(false)
   releaseBody()
   await expect(result).rejects.toThrow(
-    'src/readme.md not found; run `git checkout src/readme.md` to restore',
+    'src/upstream/readme.md not found; run `git checkout src/upstream/readme.md` to restore',
   )
 })
 
@@ -122,7 +122,7 @@ test('reports local README missing with restoration guidance', async () => {
       },
     ),
   ).rejects.toThrow(
-    'src/readme.md not found; run `git checkout src/readme.md` to restore',
+    'src/upstream/readme.md not found; run `git checkout src/upstream/readme.md` to restore',
   )
 })
 
