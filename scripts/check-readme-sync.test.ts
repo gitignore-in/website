@@ -41,6 +41,60 @@ test('reports an empty upstream body as a fetch failure', async () => {
   )
 })
 
+test('cancels a non-OK upstream response body before reporting the failure', async () => {
+  let cancelCount = 0
+  const response = new Response(
+    new ReadableStream({
+      cancel: () => {
+        cancelCount += 1
+      },
+    }),
+    { status: 503, statusText: 'Service Unavailable' },
+  )
+
+  await expect(
+    checkReadmeSync(
+      async () => response,
+      async () => 'readme',
+    ),
+  ).rejects.toThrow(
+    `Failed to fetch upstream README at ${upstreamReadmeCommit}: 503 Service Unavailable`,
+  )
+  expect(cancelCount).toBe(1)
+})
+
+test('finishes upstream body handling before a local README failure', async () => {
+  let releaseBody = () => {}
+  const response = new Response(
+    new ReadableStream({
+      start: async (controller) => {
+        await new Promise<void>((resolve) => {
+          releaseBody = resolve
+        })
+        controller.enqueue(new TextEncoder().encode('readme'))
+        controller.close()
+      },
+    }),
+  )
+  let localReadStarted = false
+  const missingReadme = new Error('missing')
+  ;(missingReadme as NodeJS.ErrnoException).code = 'ENOENT'
+
+  const result = checkReadmeSync(
+    async () => response,
+    async () => {
+      localReadStarted = true
+      throw missingReadme
+    },
+  )
+
+  expect(localReadStarted).toBe(false)
+  releaseBody()
+  await expect(result).rejects.toThrow(
+    'src/readme.md not found; run `git checkout src/readme.md` to restore',
+  )
+})
+
 test('reports upstream body read failures before comparing content', async () => {
   const response = new Response('readme')
   response.text = async () => {
