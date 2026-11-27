@@ -26,8 +26,17 @@ const readResponseText = async (response: Response): Promise<string> => {
   }
 }
 
-const assertFetchResponseOk = (response: Response) => {
+const cancelResponseBody = async (response: Response) => {
+  try {
+    await response.body?.cancel()
+  } catch {
+    // Preserve the HTTP status error when an already-errored stream rejects cancellation.
+  }
+}
+
+const assertFetchResponseOk = async (response: Response) => {
   if (!response.ok) {
+    await cancelResponseBody(response)
     throw new Error(
       `Failed to fetch upstream README at ${upstreamReadmeCommit}: ${response.status} ${response.statusText}`,
     )
@@ -62,7 +71,7 @@ export const fetchUpstreamReadme = async (
     const response = await fetcher(sourceUrl, {
       signal: AbortSignal.timeout(10_000),
     })
-    assertFetchResponseOk(response)
+    await assertFetchResponseOk(response)
 
     const upstreamReadme = await readResponseText(response)
     assertResponseBodyIsNotEmpty(upstreamReadme)
@@ -89,10 +98,8 @@ export const checkReadmeSync = async (
   fetcher: Fetcher = fetch,
   readLocalReadme: LocalReadmeReader = () => readFile(localReadmeUrl, 'utf8'),
 ): Promise<void> => {
-  const [upstreamReadme, localReadme] = await Promise.all([
-    fetchUpstreamReadme(fetcher),
-    readLocalReadmeWithContext(readLocalReadme),
-  ])
+  const upstreamReadme = await fetchUpstreamReadme(fetcher)
+  const localReadme = await readLocalReadmeWithContext(readLocalReadme)
 
   if (normalize(localReadme) !== normalize(upstreamReadme)) {
     throw new Error(
